@@ -5,6 +5,8 @@ add_library(bms
     DTCManager.cpp
     CANBus.cpp
     BatteryStateMachine.cpp
+    BatteryPack.cpp
+    GlobalVariables.cpp
 )
 
 # Public include directory
