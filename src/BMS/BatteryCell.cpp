@@ -1,4 +1,4 @@
-#include "../include/BMS/BatteryCell.h"
+#include "../../include/BMS/BatteryCell.h"
 
 BatteryCell::BatteryCell(float voltage, float current, float temperature, float soc)
 {

@@ -1,10 +1,27 @@
-#include "../include/BMS/BattreryPack.h"
+#include "../../include/BMS/BatteryPack.h"
 #include <iostream>
 
 BatteryPack::BatteryPack(int cellInSeries, int cellInParallel)
 {
     CellInSeries = cellInSeries;
     CellInParallel = cellInParallel;
+
+    batteryPackElectricModel.resize(CellInParallel);
+    batteryPackThermalModel.resize(CellInParallel);
+
+    for (int i = 0; i < CellInParallel; i++)
+    {
+        batteryPackElectricModel[i].resize(CellInSeries);
+        batteryPackThermalModel[i].resize(CellInSeries);
+
+        for (int j = 0; j < CellInSeries; j++)
+        {
+
+            batteryPackElectricModel[i][j] = BatteryCellElectricalModel();
+
+            batteryPackThermalModel[i][j] = BatteryCellThermalModel();
+        }
+    }
 }
 
 void BatteryPack::setGlobalVariables(GlobalVariables *globalData)
@@ -14,14 +31,8 @@ void BatteryPack::setGlobalVariables(GlobalVariables *globalData)
 
 void BatteryPack::createBatteryPack()
 {
-    batteryPackElectricModel.resize(CellInParallel);
-    batteryPackThermalModel.resize(CellInParallel);
-
     for (int i = 0; i < CellInParallel; i++)
     {
-        batteryPackElectricModel[i].resize(CellInSeries);
-        batteryPackThermalModel[i].resize(CellInSeries);
-
         for (int j = 0; j < CellInSeries; j++)
         {
             if (GlobalVariablesPointer)
@@ -43,7 +54,7 @@ void BatteryPack::createBatteryPack()
     }
 }
 
-void BatteryPack::calculateCellVolate(double soc)
+void BatteryPack::calculateCellVoltage(double soc)
 {
     for (int i = 0; i < CellInParallel; i++)
     {
@@ -101,4 +112,10 @@ float BatteryPack::getAverageTemperature()
     }
 
     return sumTemperature / (float)(CellInParallel * CellInSeries);
+}
+
+void BatteryPack::printStatus()
+{
+    std::cout << "Battery Voltage: " << getTotalVoltage() << "[V]\n";
+    std::cout << "Battery Temperature: " << getAverageTemperature() << "[degC]\v";
 }

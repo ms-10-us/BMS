@@ -16,6 +16,8 @@ private:
     double CalculateOCV(double soc) const;
 
 public:
+    BatteryCellElectricalModel();
+
     BatteryCellElectricalModel(double capacityAh, double r0, double r1, double c1, double initialSOC);
 
     void RunRCModel(double current, double dt);

@@ -1,5 +1,5 @@
-#include "../include/BMS/BatteryCellElectricalModel.h"
-#include "math.h"
+#include "../../include/BMS/BatteryCellElectricalModel.h"
+#include <cmath>
 #include <algorithm>
 
 BatteryCellElectricalModel::BatteryCellElectricalModel(double capacityAh, double r0, double r1, double c1, double initialSOC)

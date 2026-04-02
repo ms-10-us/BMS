@@ -1,21 +1,19 @@
-add_library(bms
+add_library(BatteryModel
     BatteryCell.cpp
     BatteryCellThermalModel.cpp
     BatteryCellElectricalModel.cpp
-    DTCManager.cpp
-    CANBus.cpp
-    BatteryStateMachine.cpp
     BatteryPack.cpp
-    GlobalVariables.cpp
+    BatteryStateMachine.cpp
+    DTCManager.cpp
 )
 
 # Public include directory
-target_include_directories(bms
+target_include_directories(BatteryModel
     PUBLIC
-        ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/include/BMS
 )
 
 # Compiler warnings (professional touch)
-target_compile_options(bms PRIVATE
+target_compile_options(BatteryModel PRIVATE
     -Wall -Wextra -Wpedantic
 )

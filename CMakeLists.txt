@@ -19,7 +19,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 option(BMS_BUILD_APP "Build the main application" ON)
 
 # Add subdirectories
-add_subdirectory(src)
+add_subdirectory(src/BMS)
+add_subdirectory(src/ECUs)
+add_subdirectory(src/Utilities)
 add_subdirectory(app)
 
 # 4. Build type (Release = fast, Debug = with debugger symbols)

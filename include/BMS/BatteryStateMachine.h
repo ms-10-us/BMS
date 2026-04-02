@@ -1,6 +1,8 @@
 #ifndef BATTERYSTATEMACHINE_H
 #define BATTERYSTATEMACHINE_H
 
+#include <map>
+
 enum class BMSState
 {
     IDLE,
@@ -9,15 +11,26 @@ enum class BMSState
     FAULT
 };
 
+enum class BMSEvent
+{
+    START_CHARGING,
+    START_DRIVING,
+    STOP,
+    FAULT_DETECTED,
+    FAULT_CLEARED
+};
+
 class BatteryStateMachine
 {
 private:
-    BMSState currentBatteryState;
+    BMSState CurrentBatteryState;
+
+    std::map<std::pair<BMSState, BMSEvent>, BMSState> TransitionTable;
 
 public:
     BatteryStateMachine();
 
-    void setState(BMSState newState);
+    void handleEvent(BMSEvent event);
 
     BMSState getState() const;
 

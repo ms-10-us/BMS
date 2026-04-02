@@ -1,4 +1,4 @@
-#include "../include/BMS/GlobalVariables.h"
+#include "../../include/BMS/GlobalVariables.h"
 
 GlobalVariables globalVariables = {
     .GlobalCapacityAh = 2.5,
@@ -11,4 +11,5 @@ GlobalVariables globalVariables = {
     .GlobalCellMass = 0.05,
     .GlobalCellCp = 900,
     .GlobalInitialTemperature = 25,
-    .TestCurrent = 2};
+    .TestCurrent = 2,
+    .ThreadSleepTime = 1000};

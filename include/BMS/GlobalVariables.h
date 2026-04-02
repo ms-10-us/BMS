@@ -14,6 +14,7 @@ struct GlobalVariables
     double GlobalCellCp;             // J/(kg·K)
     double GlobalInitialTemperature; // degC
     double TestCurrent;              // A
+    int ThreadSleepTime = 1000;      // ms
 };
 
 #endif

@@ -10,6 +10,8 @@ private:
     double CellTemperature;
 
 public:
+    BatteryCellThermalModel();
+
     BatteryCellThermalModel(double cellMass, double cellCp, double cellResistance, double cellInitialTemperature);
 
     void CalculateCellTemperature(double current, double timeStep);
