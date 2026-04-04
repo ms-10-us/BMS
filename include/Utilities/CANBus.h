@@ -6,7 +6,9 @@
 class CANBus
 {
 public:
-    void sendMessage(int id, const std::string &data);
+    CANBus();
+
+    void sendMessage(int id, const float *data);
 };
 
 #endif

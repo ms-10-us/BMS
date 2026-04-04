@@ -3,7 +3,7 @@
 
 #include "../BMS/BatteryPack.h"
 #include "../BMS/DTCManager.h"
-#include "../BMS/CANBus.h"
+#include "../Utilities/CANBus.h"
 #include "../BMS/BatteryStateMachine.h"
 #include "../Utilities/PIDController.h"
 
@@ -22,9 +22,8 @@ private:
     std::thread monitorTaskThread;
     std::thread safetyTaskThread;
     std::thread canTaskThread;
-    std::thread pidControllerThread;
-
-    GlobalVariables *GlobalVariablePtr;
+    std::thread currentPIDThread;
+    std::thread batteryPackThread;
 
     std::atomic<bool> Running;
 
@@ -37,9 +36,11 @@ public:
 
     ~BMSECU();
 
-    void setGlobalVariable(GlobalVariables *globalData);
+    void StartAllTasks();
 
-    void currentControl(double currentSetPoint, double currentMeasured, BMSEvent bmsEvent);
+    void StopAllTasks();
+
+    void currentControl(double *currentCommand, BMSEvent bmsEvent);
 };
 
 #endif

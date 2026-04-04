@@ -17,6 +17,8 @@ private:
     std::vector<DTCCode> activeCodes;
 
 public:
+    DTCManager();
+
     void addDTCCode(DTCCode dtcCode);
 
     void clearDTCs();

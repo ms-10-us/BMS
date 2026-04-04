@@ -1,6 +1,10 @@
 #include "../../include/BMS/BatteryCellThermalModel.h"
 #include <cmath>
 
+BatteryCellThermalModel::BatteryCellThermalModel()
+{
+}
+
 BatteryCellThermalModel::BatteryCellThermalModel(double cellMass, double cellCp, double cellResistance, double cellInitialTemperature)
 {
     CellMass = cellMass;

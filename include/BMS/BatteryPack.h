@@ -4,7 +4,8 @@
 #include <vector>
 #include "BatteryCellElectricalModel.h"
 #include "BatteryCellThermalModel.h"
-#include "GlobalVariables.h"
+#include "../Utilities/GlobalVariables.h"
+#include <algorithm>
 
 class BatteryPack
 {
@@ -13,16 +14,11 @@ private:
     std::vector<std::vector<BatteryCellThermalModel>> batteryPackThermalModel;
     int CellInSeries;
     int CellInParallel;
-    GlobalVariables *GlobalVariablesPointer = nullptr;
 
 public:
     BatteryPack(int cellInSeries, int cellInParallel);
 
-    void setGlobalVariables(GlobalVariables *globalData);
-
-    void createBatteryPack();
-
-    void calculateCellVoltage(double soc);
+    void calculateCellVoltage(double *current);
 
     float getTotalVoltage() const;
 

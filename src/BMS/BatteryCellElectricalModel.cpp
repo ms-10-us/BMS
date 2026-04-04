@@ -2,6 +2,10 @@
 #include <cmath>
 #include <algorithm>
 
+BatteryCellElectricalModel::BatteryCellElectricalModel()
+{
+}
+
 BatteryCellElectricalModel::BatteryCellElectricalModel(double capacityAh, double r0, double r1, double c1, double initialSOC)
 {
     CellCapacity = capacityAh * 3600;

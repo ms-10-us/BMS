@@ -1,42 +1,54 @@
 #include "../include/BMS/BatteryCell.h"
 #include "../include/BMS/BatteryCellElectricalModel.h"
 #include "../include/BMS/BatteryCellThermalModel.h"
+#include "../include/Utilities/CANBus.h"
+#include "../include/ECUs/BMSECU.h"
+#include "../include/Utilities/PIDController.h"
+#include "../include/Utilities/GlobalVariables.h"
 #include <iostream>
 using namespace std;
 
-double GlobalCapacityAh = 2.5;        // Amp-hour
-double GlobalR0 = 0.01;               // ohms
-double GlobalR1 = 0.02;               // ohms
-double GlobalC1 = 2000.0;             // mF
-double GlobalInitialSOC = 1.0;        // no units
-double GlobalSimTime = 10;            // sec
-double GlobalTimeStep = 0.1;          // sec
-double GlobalCellMass = 0.05;         // kg
-double GlobalCellCp = 900;            // J/(kg·K)
-double GlobalInitialTemperature = 25; // degC
-
 int main()
 {
+    int totalTimeStepCount = globalData.GlobalSimTime / globalData.GlobalTimeStep;
 
-    BatteryCellElectricalModel BMSElectricalModel = BatteryCellElectricalModel(GlobalCapacityAh, GlobalR0, GlobalR1, GlobalC1, GlobalInitialSOC);
-    BatteryCellThermalModel BMSThermalModel = BatteryCellThermalModel(GlobalCellMass, GlobalCellCp, GlobalR0, GlobalInitialTemperature);
-    double current = 0.0;
+    double currentSetPoint;
+    cout << "\nEnter Current Set Point: ";
+    cin >> currentSetPoint;
 
-    for (int i = 0; i <= (GlobalSimTime / GlobalTimeStep); i++)
+    double currentKp;
+    cout << "\nEnter Current Controller Proportional Gain: ";
+    cin >> currentKp;
+
+    double currentKi;
+    cout << "\nEnter Current Controller Integral Gain: ";
+    cin >> currentKi;
+
+    double currentKd;
+    cout << "\nEnter Current Controller Derivative Gain: ";
+    cin >> currentKd;
+
+    BatteryPack batteryPack = BatteryPack(7, 8);
+
+    PIDController currentPIDController = PIDController(currentKp, currentKi, currentKd);
+    currentPIDController.setSetPointPtr(&currentSetPoint);
+
+    DTCManager dtcManager = DTCManager();
+
+    CANBus canBUS = CANBus();
+
+    BatteryStateMachine batteryStateMachine = BatteryStateMachine();
+
+    BMSECU bmsECU = BMSECU(&batteryPack, &dtcManager, &canBUS, &batteryStateMachine, &currentPIDController);
+
+    currentPIDController.RunPIDController(&currentSetPoint, &globalData.CurrentInitialCondition, globalData.GlobalTimeStep);
+
+    for (int i = 0; i < (totalTimeStepCount); i++)
     {
-        current += 0.25;
-
-        BMSElectricalModel.RunRCModel(current, GlobalTimeStep);
-
-        cout << "@time = " << GlobalTimeStep * i << endl;
-        cout << "Voltage = " << BMSElectricalModel.getVoltage() << " V \n";
-        cout << "SOC = " << BMSElectricalModel.getSOC() << endl;
-        cout << "Current = " << current << " A \n";
-
-        BMSThermalModel.CalculateCellTemperature(current, GlobalTimeStep);
-        cout << "Cell Temperature = " << BMSThermalModel.getTemperature() << " degC \n";
-        cout << "\n";
+        bmsECU.currentControl(currentPIDController.getCommandPtr(), BMSEvent::START_DRIVING);
     }
+
+    bmsECU.currentControl(currentPIDController.getCommandPtr(), BMSEvent::STOP);
 
     return 0;
 }

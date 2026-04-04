@@ -4,19 +4,38 @@ PIDController::PIDController(double kp, double ki, double kd)
 {
     Kp = kp;
     Ki = ki;
-    Kd = Kd;
+    Kd = kd;
     PreviousError = 0.0;
     IntegralError = 0.0;
     DerivativeError = 0.0;
+    SetPointPtr = nullptr;
+    Command = 0.0;
+    CommandPtr = nullptr;
 }
 
-double PIDController::RunPIDController(double setPoint, double measured, double dt)
+void PIDController::RunPIDController(double *setPoint, double *measured, double dt)
 {
-    double error = setPoint - measured;
+    double error = *setPoint - *measured;
     IntegralError += error * dt;
     DerivativeError = (error - PreviousError) / dt;
     PreviousError = error;
-    return (Kp * error) + (Ki * IntegralError) + (Kd * DerivativeError);
+    Command = (Kp * error) + (Ki * IntegralError) + (Kd * DerivativeError);
+    CommandPtr = &Command;
+}
+
+void PIDController::setSetPointPtr(double *setPoint)
+{
+    SetPointPtr = setPoint;
+}
+
+double *PIDController::getSetPointPtr()
+{
+    return SetPointPtr;
+}
+
+double *PIDController::getCommandPtr()
+{
+    return CommandPtr;
 }
 
 void PIDController::reset()

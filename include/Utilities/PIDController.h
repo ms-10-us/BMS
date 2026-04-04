@@ -1,6 +1,8 @@
 #ifndef PIDCONTROLLER_H
 #define PIDCONTROLLER_H
 
+#include "GlobalVariables.h"
+
 class PIDController
 {
 private:
@@ -8,11 +10,20 @@ private:
     double PreviousError;
     double IntegralError;
     double DerivativeError;
+    double *SetPointPtr;
+    double Command;
+    double *CommandPtr;
 
 public:
     PIDController(double kp, double ki, double kd);
 
-    double RunPIDController(double setPoint, double measured, double dt);
+    void setSetPointPtr(double *setPoint);
+
+    double *getSetPointPtr();
+
+    double *getCommandPtr();
+
+    void RunPIDController(double *setPoint, double *measured, double dt);
 
     void reset();
 };

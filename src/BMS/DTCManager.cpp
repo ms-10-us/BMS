@@ -3,6 +3,11 @@
 
 using namespace std;
 
+DTCManager::DTCManager()
+{
+    activeCodes = {};
+}
+
 void DTCManager::addDTCCode(DTCCode dtcCode)
 {
     activeCodes.push_back(dtcCode);
