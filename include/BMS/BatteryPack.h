@@ -18,9 +18,11 @@ private:
 public:
     BatteryPack(int cellInSeries, int cellInParallel);
 
-    void calculateCellVoltage(double *current);
+    void calculateCellVoltage(double *batteryTotalCurrent);
 
     float getTotalVoltage() const;
+
+    void claculateAverageTemperature(double *batteryTotalCurrent);
 
     float getAverageTemperature();
 

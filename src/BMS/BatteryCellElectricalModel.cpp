@@ -23,20 +23,20 @@ double BatteryCellElectricalModel::CalculateOCV(double soc) const
     return 3.0 + 1.2 * soc - 0.3 * pow(soc, 2) + 0.1 * pow(soc, 3);
 }
 
-void BatteryCellElectricalModel::RunRCModel(double current, double dt)
+void BatteryCellElectricalModel::RunRCModel(double *current, double dt)
 {
     // Update SOC
-    double dSOCdt = -current / CellCapacity;
+    double dSOCdt = -*current / CellCapacity;
     CellSOC += dSOCdt * dt;
     CellSOC = std::clamp(CellSOC, 0.0, 1.0);
 
     // Update RC Branch
-    double dV1dt = (-CellV1 / (CellR1 * CellC1)) + current / CellC1;
+    double dV1dt = (-CellV1 / (CellR1 * CellC1)) + *current / CellC1;
     CellV1 += dV1dt * dt;
 
     // Voltage
     double ocv = CalculateOCV(CellSOC);
-    CellVoltage = ocv - current * CellR0 - CellV1;
+    CellVoltage = ocv - *current * CellR0 - CellV1;
 }
 
 double BatteryCellElectricalModel::getVoltage() const

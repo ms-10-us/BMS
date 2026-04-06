@@ -23,6 +23,8 @@ struct GlobalVariables
     int VoltageMaxValue = 100;              // V
     int GlobalCurrentCycle = 0;
     std::atomic<bool> RunningBMS = false;
+    double GlobalPIDCurrentMinCommand = 0.0; // A
+    double GlobalPIDCurrentMaxCommand = 5.0; // A
 };
 
 extern GlobalVariables globalData;

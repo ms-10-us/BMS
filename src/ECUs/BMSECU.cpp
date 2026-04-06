@@ -86,8 +86,10 @@ void BMSECU::currentControl(BMSEvent bmsEvent)
         StateMachinePtr->handleEvent(bmsEvent);
 
         CurrentPIDPtr->RunPIDController(CurrentPIDPtr->getSetPointPtr(), CurrentPIDPtr->getCommandPtr(), globalData.GlobalTimeStep);
+        CurrentPIDPtr->ClampPIDCommand(&globalData.GlobalPIDCurrentMinCommand, &globalData.GlobalPIDCurrentMaxCommand);
         CurrentPIDPtr->printCommand();
         BatteryPackPtr->calculateCellVoltage(CurrentPIDPtr->getCommandPtr());
+        BatteryPackPtr->claculateAverageTemperature(CurrentPIDPtr->getCommandPtr());
         monitorTask();
         safetyTask();
         canTask();

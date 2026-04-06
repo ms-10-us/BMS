@@ -47,6 +47,18 @@ double *PIDController::getCommandPtr()
     return CommandPtr;
 }
 
+void PIDController::ClampPIDCommand(double *commandMin, double *commandMax)
+{
+    if (*CommandPtr < *commandMin)
+    {
+        *CommandPtr = *commandMin;
+    }
+    else if (*CommandPtr > *commandMax)
+    {
+        *CommandPtr = *commandMax;
+    }
+}
+
 void PIDController::reset()
 {
     PreviousError = 0.0;

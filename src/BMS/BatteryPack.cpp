@@ -33,16 +33,18 @@ BatteryPack::BatteryPack(int cellInSeries, int cellInParallel)
     }
 }
 
-void BatteryPack::calculateCellVoltage(double *current)
+void BatteryPack::calculateCellVoltage(double *batteryTotalCurrent)
 {
 
-    if (current)
+    if (batteryTotalCurrent)
     {
+        double currentInSeries = *batteryTotalCurrent / (double)CellInParallel;
+
         for (int i = 0; i < CellInParallel; i++)
         {
             for (int j = 0; j < CellInSeries; j++)
             {
-                batteryPackElectricModel[i][j].RunRCModel(*current, globalData.GlobalTimeStep);
+                batteryPackElectricModel[i][j].RunRCModel(&currentInSeries, globalData.GlobalTimeStep);
             }
         }
     }
@@ -70,20 +72,27 @@ float BatteryPack::getTotalVoltage() const
     {
         voltageTotal += voltageVector[i];
     }
+    voltageTotal = voltageTotal / CellInParallel;
 
-    return std::clamp(voltageTotal, static_cast<float>(globalData.VoltageMinValue), static_cast<float>(globalData.VoltageMaxValue));
+    return voltageTotal;
+    // return std::clamp(voltageTotal, static_cast<float>(globalData.VoltageMinValue), static_cast<float>(globalData.VoltageMaxValue));
 }
 
-float BatteryPack::getAverageTemperature()
+void BatteryPack::claculateAverageTemperature(double *batteryTotalCurrent)
 {
+    double currentInSeries = *batteryTotalCurrent / (double)CellInParallel;
+
     for (int i = 0; i < CellInParallel; i++)
     {
         for (int j = 0; j < CellInSeries; j++)
         {
-            batteryPackThermalModel[i][j].CalculateCellTemperature(globalData.TestCurrent, globalData.GlobalTimeStep);
+            batteryPackThermalModel[i][j].CalculateCellTemperature(&currentInSeries, globalData.GlobalTimeStep);
         }
     }
+}
 
+float BatteryPack::getAverageTemperature()
+{
     float sumTemperature = 0.0;
 
     for (int i = 0; i < CellInParallel; i++)

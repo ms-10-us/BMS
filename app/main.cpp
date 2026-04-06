@@ -42,8 +42,9 @@ int main()
 
     BMSECU bmsECU = BMSECU(&batteryPack, &dtcManager, &canBUS, &batteryStateMachine, &currentPIDController);
 
-    for (int i = 0; i < totalTimeStepCount; i++)
+    for (int i = 0; i <= totalTimeStepCount; i++)
     {
+        cout << "Time = " << globalData.GlobalTimeStep * i << " [sec]\n";
         bmsECU.currentControl(BMSEvent::START_DRIVING);
         std::this_thread::sleep_for(std::chrono::milliseconds(globalData.ThreadSleepTime));
     }

@@ -14,7 +14,7 @@ public:
 
     BatteryCellThermalModel(double cellMass, double cellCp, double cellResistance, double cellInitialTemperature);
 
-    void CalculateCellTemperature(double current, double timeStep);
+    void CalculateCellTemperature(double *current, double timeStep);
 
     double getTemperature() const;
 };

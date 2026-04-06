@@ -27,6 +27,8 @@ public:
 
     void printCommand();
 
+    void ClampPIDCommand(double *commandMin, double *commandMax);
+
     void reset();
 };
 

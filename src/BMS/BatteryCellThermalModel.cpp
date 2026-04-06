@@ -13,9 +13,9 @@ BatteryCellThermalModel::BatteryCellThermalModel(double cellMass, double cellCp,
     CellTemperature = cellInitialTemperature;
 }
 
-void BatteryCellThermalModel::CalculateCellTemperature(double current, double timeStep)
+void BatteryCellThermalModel::CalculateCellTemperature(double *current, double timeStep)
 {
-    double dTdt = (1 / (CellMass * CellCp)) * pow(current, 2) * CellResistance;
+    double dTdt = (1 / (CellMass * CellCp)) * pow(*current, 2) * CellResistance;
     double DeltaCellTemperature = dTdt * timeStep;
     CellTemperature += DeltaCellTemperature;
 }
