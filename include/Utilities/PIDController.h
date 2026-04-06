@@ -25,6 +25,8 @@ public:
 
     void RunPIDController(double *setPoint, double *measured, double dt);
 
+    void printCommand();
+
     void reset();
 };
 

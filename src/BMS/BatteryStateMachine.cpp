@@ -26,9 +26,8 @@ void BatteryStateMachine::handleEvent(BMSEvent event)
     if (TransitionTable.find(key) != TransitionTable.end())
     {
         CurrentBatteryState = TransitionTable[key];
+        printState();
     }
-
-    printState();
 }
 
 BMSState BatteryStateMachine::getState() const

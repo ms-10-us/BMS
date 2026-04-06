@@ -6,6 +6,7 @@
 #include "../include/Utilities/PIDController.h"
 #include "../include/Utilities/GlobalVariables.h"
 #include <iostream>
+#include <thread>
 using namespace std;
 
 int main()
@@ -41,14 +42,12 @@ int main()
 
     BMSECU bmsECU = BMSECU(&batteryPack, &dtcManager, &canBUS, &batteryStateMachine, &currentPIDController);
 
-    currentPIDController.RunPIDController(&currentSetPoint, &globalData.CurrentInitialCondition, globalData.GlobalTimeStep);
-
-    for (int i = 0; i < (totalTimeStepCount); i++)
+    for (int i = 0; i < totalTimeStepCount; i++)
     {
-        bmsECU.currentControl(currentPIDController.getCommandPtr(), BMSEvent::START_DRIVING);
+        bmsECU.currentControl(BMSEvent::START_DRIVING);
+        std::this_thread::sleep_for(std::chrono::milliseconds(globalData.ThreadSleepTime));
     }
-
-    bmsECU.currentControl(currentPIDController.getCommandPtr(), BMSEvent::STOP);
+    bmsECU.currentControl(BMSEvent::STOP);
 
     return 0;
 }

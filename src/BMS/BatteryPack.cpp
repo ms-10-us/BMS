@@ -35,11 +35,15 @@ BatteryPack::BatteryPack(int cellInSeries, int cellInParallel)
 
 void BatteryPack::calculateCellVoltage(double *current)
 {
-    for (int i = 0; i < CellInParallel; i++)
+
+    if (current)
     {
-        for (int j = 0; j < CellInSeries; j++)
+        for (int i = 0; i < CellInParallel; i++)
         {
-            batteryPackElectricModel[i][j].RunRCModel(*current, globalData.GlobalTimeStep);
+            for (int j = 0; j < CellInSeries; j++)
+            {
+                batteryPackElectricModel[i][j].RunRCModel(*current, globalData.GlobalTimeStep);
+            }
         }
     }
 }
@@ -95,7 +99,7 @@ float BatteryPack::getAverageTemperature()
 
 void BatteryPack::printStatus()
 {
-    std::cout << "Battery Voltage: " << getTotalVoltage() << "[V]\n";
-    std::cout << "Battery Temperature: " << getAverageTemperature() << "[degC]\n";
-    std::cout << "\n";
+    std::cout << "Battery Voltage: " << getTotalVoltage() << "[V]\n"
+              << "Battery Temperature: " << getAverageTemperature() << "[degC]\n"
+              << "\n";
 }

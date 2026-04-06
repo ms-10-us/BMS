@@ -1,4 +1,5 @@
 #include "../../include/Utilities/PIDController.h"
+#include <iostream>
 
 PIDController::PIDController(double kp, double ki, double kd)
 {
@@ -10,17 +11,25 @@ PIDController::PIDController(double kp, double ki, double kd)
     DerivativeError = 0.0;
     SetPointPtr = nullptr;
     Command = 0.0;
-    CommandPtr = nullptr;
+    CommandPtr = &Command;
 }
 
 void PIDController::RunPIDController(double *setPoint, double *measured, double dt)
 {
-    double error = *setPoint - *measured;
-    IntegralError += error * dt;
-    DerivativeError = (error - PreviousError) / dt;
-    PreviousError = error;
-    Command = (Kp * error) + (Ki * IntegralError) + (Kd * DerivativeError);
-    CommandPtr = &Command;
+    if (setPoint && measured)
+    {
+        double error = *setPoint - *measured;
+        IntegralError += error * dt;
+        DerivativeError = (error - PreviousError) / dt;
+        PreviousError = error;
+        Command = (Kp * error) + (Ki * IntegralError) + (Kd * DerivativeError);
+        CommandPtr = &Command;
+    }
+}
+
+void PIDController::printCommand()
+{
+    std::cout << "PID Command: " << Command << " [A]\n";
 }
 
 void PIDController::setSetPointPtr(double *setPoint)

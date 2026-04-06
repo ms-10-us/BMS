@@ -7,9 +7,6 @@
 #include "../BMS/BatteryStateMachine.h"
 #include "../Utilities/PIDController.h"
 
-#include <thread>
-#include <atomic>
-
 class BMSECU
 {
 private:
@@ -18,14 +15,6 @@ private:
     CANBus *CanPtr;
     BatteryStateMachine *StateMachinePtr;
     PIDController *CurrentPIDPtr;
-
-    std::thread monitorTaskThread;
-    std::thread safetyTaskThread;
-    std::thread canTaskThread;
-    std::thread currentPIDThread;
-    std::thread batteryPackThread;
-
-    std::atomic<bool> Running;
 
     void monitorTask();
     void safetyTask();
@@ -36,11 +25,9 @@ public:
 
     ~BMSECU();
 
-    void StartAllTasks();
-
     void StopAllTasks();
 
-    void currentControl(double *currentCommand, BMSEvent bmsEvent);
+    void currentControl(BMSEvent bmsEvent);
 };
 
 #endif

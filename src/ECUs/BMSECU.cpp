@@ -10,7 +10,7 @@ BMSECU::BMSECU(BatteryPack *batteryPackPtr, DTCManager *dtcManagerPtr, CANBus *c
     CanPtr = canBusPtr;
     StateMachinePtr = batteryStateMachinePtr;
     CurrentPIDPtr = currentPIDPtr;
-    Running = false;
+    globalData.RunningBMS = false;
 }
 
 BMSECU::~BMSECU()
@@ -20,155 +20,81 @@ BMSECU::~BMSECU()
 
 void BMSECU::monitorTask()
 {
-    while (Running)
+
+    if (BatteryPackPtr)
     {
-        if (BatteryPackPtr)
-        {
-            BatteryPackPtr->printStatus();
-            // std::this_thread::sleep_for(std::chrono::milliseconds(globalData.ThreadSleepTime));
-        }
+        BatteryPackPtr->printStatus();
     }
 }
 
 void BMSECU::safetyTask()
 {
-    while (Running)
+    if (BatteryPackPtr)
     {
-        if (BatteryPackPtr)
+        float batteryVoltage = BatteryPackPtr->getTotalVoltage();
+        float batteryTemperature = BatteryPackPtr->getAverageTemperature();
+
+        DTCManagerPtr->clearDTCs();
+
+        if (batteryTemperature >= 60.0)
         {
-            float batteryVoltage = BatteryPackPtr->getTotalVoltage();
-            float batteryTemperature = BatteryPackPtr->getAverageTemperature();
+            DTCManagerPtr->addDTCCode(DTCCode::OverTemperature);
+        }
 
-            DTCManagerPtr->clearDTCs();
+        if (batteryVoltage < 30.0)
+        {
+            DTCManagerPtr->addDTCCode(DTCCode::UnderVoltage);
+        }
 
-            if (batteryTemperature >= 60.0)
-            {
-                DTCManagerPtr->addDTCCode(DTCCode::OverTemperature);
-            }
+        if (batteryVoltage > 100)
+        {
+            DTCManagerPtr->addDTCCode(DTCCode::OverVoltage);
+        }
 
-            if (batteryVoltage < 30.0)
-            {
-                DTCManagerPtr->addDTCCode(DTCCode::UnderVoltage);
-            }
-
-            if (batteryVoltage > 100)
-            {
-                DTCManagerPtr->addDTCCode(DTCCode::OverVoltage);
-            }
-
-            if (DTCManagerPtr->hasFault())
-            {
-                StateMachinePtr->handleEvent(BMSEvent::FAULT_DETECTED);
-            }
-            else
-            {
-                StateMachinePtr->handleEvent(BMSEvent::FAULT_CLEARED);
-            }
-
-            // std::this_thread::sleep_for(std::chrono::milliseconds(globalData.ThreadSleepTime));
+        if (DTCManagerPtr->hasFault())
+        {
+            StateMachinePtr->handleEvent(BMSEvent::FAULT_DETECTED);
+        }
+        else
+        {
+            StateMachinePtr->handleEvent(BMSEvent::FAULT_CLEARED);
         }
     }
 }
 
 void BMSECU::canTask()
 {
-    while (Running)
-    {
-        if (BatteryPackPtr)
-        {
-            float batteryVoltage = BatteryPackPtr->getTotalVoltage();
-            CanPtr->sendMessage(0x100, &batteryVoltage);
 
-            // std::this_thread::sleep_for(std::chrono::milliseconds(globalData.ThreadSleepTime));
-        }
-    }
-}
-
-void BMSECU::StartAllTasks()
-{
-    if (!Running)
+    if (BatteryPackPtr)
     {
-        return;
-    }
-
-    if (!currentPIDThread.joinable())
-    {
-        currentPIDThread = std::thread(&PIDController::RunPIDController,
-                                       CurrentPIDPtr,
-                                       CurrentPIDPtr->getSetPointPtr(),
-                                       CurrentPIDPtr->getCommandPtr(),
-                                       globalData.GlobalTimeStep);
-    }
-
-    if (!batteryPackThread.joinable())
-    {
-        batteryPackThread = std::thread(&BatteryPack::calculateCellVoltage,
-                                        BatteryPackPtr,
-                                        CurrentPIDPtr->getCommandPtr());
-    }
-
-    if (!monitorTaskThread.joinable())
-    {
-        monitorTaskThread = std::thread(&BMSECU::monitorTask, this);
-    }
-
-    if (!safetyTaskThread.joinable())
-    {
-        safetyTaskThread = std::thread(&BMSECU::safetyTask, this);
-    }
-
-    if (!canTaskThread.joinable())
-    {
-        canTaskThread = std::thread(&BMSECU::canTask, this);
+        float batteryVoltage = BatteryPackPtr->getTotalVoltage();
+        CanPtr->sendMessage(0x100, &batteryVoltage);
     }
 }
 
 void BMSECU::StopAllTasks()
 {
-    Running = false;
-
-    if (currentPIDThread.joinable())
-    {
-        currentPIDThread.join();
-    }
-
-    if (batteryPackThread.joinable())
-    {
-        batteryPackThread.join();
-    }
-
-    if (monitorTaskThread.joinable())
-    {
-        monitorTaskThread.join();
-    }
-
-    if (safetyTaskThread.joinable())
-    {
-        safetyTaskThread.join();
-    }
-
-    if (canTaskThread.joinable())
-    {
-        canTaskThread.join();
-    }
+    globalData.RunningBMS = false;
 }
 
-void BMSECU::currentControl(double *currentCommand, BMSEvent bmsEvent)
+void BMSECU::currentControl(BMSEvent bmsEvent)
 {
     if (bmsEvent != BMSEvent::STOP)
     {
-        Running = true;
+        globalData.RunningBMS = true;
 
         StateMachinePtr->handleEvent(bmsEvent);
 
-        if (currentCommand)
-        {
-            StartAllTasks();
-        }
+        CurrentPIDPtr->RunPIDController(CurrentPIDPtr->getSetPointPtr(), CurrentPIDPtr->getCommandPtr(), globalData.GlobalTimeStep);
+        CurrentPIDPtr->printCommand();
+        BatteryPackPtr->calculateCellVoltage(CurrentPIDPtr->getCommandPtr());
+        monitorTask();
+        safetyTask();
+        canTask();
     }
     else
     {
-        Running = false;
+        globalData.RunningBMS = false;
         StateMachinePtr->handleEvent(bmsEvent);
         BMSECU::~BMSECU();
     }
