@@ -5,12 +5,17 @@
 #include "../include/ECUs/BMSECU.h"
 #include "../include/Utilities/PIDController.h"
 #include "../include/Utilities/GlobalVariables.h"
+#include "matplotlibcpp.h"
+
 #include <iostream>
 #include <thread>
+
 using namespace std;
+namespace plt = matplotlibcpp;
 
 int main()
 {
+
     int totalTimeStepCount = globalData.GlobalSimTime / globalData.GlobalTimeStep;
 
     double currentSetPoint;

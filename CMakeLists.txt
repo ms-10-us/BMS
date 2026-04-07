@@ -10,6 +10,20 @@ cmake_minimum_required(VERSION 3.14)
 # 2. Project name (change this to match your folder name)
 project(BMS)
 
+ # 2.1 Add Matplotlib-cpp
+include(FetchContent)
+
+FetchContent_Declare(
+    matplotlib_cpp
+    GIT_REPOSITORY https://github.com/lava/matplotlib-cpp.git
+    GIT_TAG        master
+    GIT_SHALLOW    TRUE
+)
+
+FetchContent_MakeAvailable(matplotlib_cpp)
+
+set(MATPLOTLIBCPP_INCLUDE_DIR ${matplotlib_cpp_SOURCE_DIR} CACHE PATH "app/")
+
 # 3. Modern C++ standard (change to 20 or 23 if you want)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
