@@ -8,6 +8,7 @@ private:
     double CellCp;
     double CellResistance;
     double CellTemperature;
+    double DeltaCellTemperature;
 
 public:
     BatteryCellThermalModel();

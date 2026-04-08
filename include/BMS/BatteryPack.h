@@ -20,11 +20,11 @@ public:
 
     void calculateCellVoltage(double *batteryTotalCurrent);
 
-    float getTotalVoltage() const;
+    double getTotalVoltage() const;
 
     void claculateAverageTemperature(double *batteryTotalCurrent);
 
-    float getAverageTemperature();
+    double getAverageTemperature();
 
     void printStatus();
 };

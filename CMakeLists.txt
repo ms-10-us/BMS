@@ -22,7 +22,17 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(matplotlib_cpp)
 
-set(MATPLOTLIBCPP_INCLUDE_DIR ${matplotlib_cpp_SOURCE_DIR} CACHE PATH "app/")
+set(MATPLOTLIBCPP_INCLUDE_DIR ${matplotlib_cpp_SOURCE_DIR})
+
+execute_process(
+    COMMAND python3 -c "import numpy; print(numpy.get_include())"
+    OUTPUT_VARIABLE NUMPY_INCLUDE_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+include_directories(${NUMPY_INCLUDE_DIR})
+
+set(Python3_NumPy_INCLUDE_DIRS ${NUMPY_INCLUDE_DIR})
 
 # 3. Modern C++ standard (change to 20 or 23 if you want)
 set(CMAKE_CXX_STANDARD 20)

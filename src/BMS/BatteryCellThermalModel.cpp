@@ -11,16 +11,16 @@ BatteryCellThermalModel::BatteryCellThermalModel(double cellMass, double cellCp,
     CellCp = cellCp;
     CellResistance = cellResistance;
     CellTemperature = cellInitialTemperature;
+    DeltaCellTemperature = 0.0;
 }
 
 void BatteryCellThermalModel::CalculateCellTemperature(double *current, double timeStep)
 {
     double dTdt = (1 / (CellMass * CellCp)) * pow(*current, 2) * CellResistance;
-    double DeltaCellTemperature = dTdt * timeStep;
-    CellTemperature += DeltaCellTemperature;
+    DeltaCellTemperature += dTdt * timeStep;
 }
 
 double BatteryCellThermalModel::getTemperature() const
 {
-    return CellTemperature;
+    return DeltaCellTemperature;
 }

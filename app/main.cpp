@@ -5,13 +5,12 @@
 #include "../include/ECUs/BMSECU.h"
 #include "../include/Utilities/PIDController.h"
 #include "../include/Utilities/GlobalVariables.h"
-#include "matplotlibcpp.h"
+#include "../include/Utilities/PlottingTool.h"
 
 #include <iostream>
 #include <thread>
 
 using namespace std;
-namespace plt = matplotlibcpp;
 
 int main()
 {
@@ -47,13 +46,18 @@ int main()
 
     BMSECU bmsECU = BMSECU(&batteryPack, &dtcManager, &canBUS, &batteryStateMachine, &currentPIDController);
 
+    PlottingTool pidPlottingTool = PlottingTool("Time [sec]", "Current Command [Amp]", "PID Response Plot");
+
     for (int i = 0; i <= totalTimeStepCount; i++)
     {
         cout << "Time = " << globalData.GlobalTimeStep * i << " [sec]\n";
         bmsECU.currentControl(BMSEvent::START_DRIVING);
+        pidPlottingTool.addPoint(globalData.GlobalTimeStep * i, *currentPIDController.getCommandPtr());
         std::this_thread::sleep_for(std::chrono::milliseconds(globalData.ThreadSleepTime));
     }
     bmsECU.currentControl(BMSEvent::STOP);
+
+    pidPlottingTool.plot();
 
     return 0;
 }
