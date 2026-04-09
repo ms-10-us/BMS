@@ -1,8 +1,14 @@
 #ifndef PLOTTINGTOOL_H
 #define PLOTTINGTOOL_H
 
+#include "GlobalVariables.h"
+
 #include <vector>
 #include <string>
+#include <barrier>
+#include <mutex>
+#include <thread>
+#include <chrono>
 #include <iostream>
 
 class PlottingTool
@@ -15,13 +21,15 @@ private:
     std::string Title;
 
 public:
+    PlottingTool();
+
     PlottingTool(std::string xlabel, std::string ylabel, std::string title);
 
     void addPoint(double x, double y);
 
     void plot() const;
 
-    // void savePlot() const;
+    void runPlot(std::barrier<> &syncWait);
 
     void resetPlottingTool();
 };

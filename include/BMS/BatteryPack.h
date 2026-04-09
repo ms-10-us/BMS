@@ -26,6 +26,8 @@ public:
 
     double getAverageTemperature();
 
+    double getAverageSOC();
+
     void printStatus();
 };
 

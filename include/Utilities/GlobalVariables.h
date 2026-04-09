@@ -1,7 +1,7 @@
 #ifndef GLOBALVARIABLES_H
 #define GLOBALVARIABLES_H
 
-#include <atomic>
+#include <mutex>
 
 struct GlobalVariables
 {
@@ -22,9 +22,10 @@ struct GlobalVariables
     int VoltageMinValue = 30;                // V
     int VoltageMaxValue = 100;               // V
     int GlobalCurrentCycle = 0;              // no units
-    std::atomic<bool> RunningBMS = false;    // no units
+    bool RunningBMS = false;                 // no units
     double GlobalPIDCurrentMinCommand = 0.0; // A
     double GlobalPIDCurrentMaxCommand = 5.0; // A
+    std::mutex MatplotLibCppMutex;           // no units
 };
 
 extern GlobalVariables globalData;

@@ -7,6 +7,10 @@
 
 namespace plt = matplotlibcpp;
 
+PlottingTool::PlottingTool()
+{
+}
+
 PlottingTool::PlottingTool(std::string xlabel, std::string ylabel, std::string title)
 {
     Xlabel = xlabel;
@@ -34,8 +38,15 @@ void PlottingTool::plot() const
         plt::xlabel(Xlabel);
         plt::ylabel(Ylabel);
         plt::grid(true);
-        plt::show();
     }
+}
+
+void PlottingTool::runPlot(std::barrier<> &syncWait)
+{
+    syncWait.arrive_and_wait();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::lock_guard<std::mutex> lock(globalData.MatplotLibCppMutex);
 }
 
 void PlottingTool::resetPlottingTool()

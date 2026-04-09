@@ -3,6 +3,7 @@ add_library(Utilities
     GlobalVariables.cpp
     PIDController.cpp
     PlottingTool.cpp
+    PlottingToolAsync.cpp
 )
 
 find_package(Python3 REQUIRED COMPONENTS Development)

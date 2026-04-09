@@ -107,9 +107,25 @@ double BatteryPack::getAverageTemperature()
     return (sumTemperature + globalData.GlobalInitialTemperature);
 }
 
+double BatteryPack::getAverageSOC()
+{
+    double sumSOC = 0.0;
+
+    for (int i = 0; i < CellInParallel; i++)
+    {
+        for (int j = 0; j < CellInSeries; j++)
+        {
+            sumSOC += (double)batteryPackElectricModel[i][j].getSOC();
+        }
+    }
+
+    return ((sumSOC / (CellInParallel * CellInSeries)) * 100);
+}
+
 void BatteryPack::printStatus()
 {
-    std::cout << "Battery Voltage: " << getTotalVoltage() << "[V]\n"
+    std::cout << "SOC: " << getAverageSOC() << " [%]\n"
+              << "Battery Voltage: " << getTotalVoltage() << "[V]\n"
               << "Battery Temperature: " << getAverageTemperature() << "[degC]\n"
               << "\n";
 }
