@@ -11,11 +11,19 @@ PlottingTool::PlottingTool()
 {
 }
 
-PlottingTool::PlottingTool(std::string xlabel, std::string ylabel, std::string title)
+PlottingTool::PlottingTool(std::string xlabel, std::string ylabel, std::string title, std::string lineStyle, int figureNumber)
 {
     Xlabel = xlabel;
     Ylabel = ylabel;
     Title = title;
+    LineStyle = lineStyle;
+    FigureNumber = figureNumber;
+
+    plt::figure(FigureNumber);
+    plt::title(Title);
+    plt::xlabel(Xlabel);
+    plt::ylabel(Ylabel);
+    plt::grid(true);
 }
 
 void PlottingTool::addPoint(double x, double y)
@@ -32,12 +40,8 @@ void PlottingTool::plot() const
     }
     else
     {
-        plt::figure();
-        plt::plot(Xpoints, Ypoints);
-        plt::title(Title);
-        plt::xlabel(Xlabel);
-        plt::ylabel(Ylabel);
-        plt::grid(true);
+        plt::figure(FigureNumber);
+        plt::plot(Xpoints, Ypoints, LineStyle);
     }
 }
 

@@ -32,7 +32,7 @@ void PlottingToolAsync::PlotMultiplePlotsAsync()
         plottingTool->plot();
     }
 
-    plt::show();
+    plt::pause(0.01);
 }
 
 PlottingToolAsync::~PlottingToolAsync()
