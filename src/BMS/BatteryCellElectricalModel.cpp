@@ -16,11 +16,17 @@ BatteryCellElectricalModel::BatteryCellElectricalModel(double capacityAh, double
     CellV1 = 0.0;
     CellVoltage = 0.0;
     CellCurrent = 0.0;
+    Cell_dOCV_dSOC = 0.0;
 }
 
 double BatteryCellElectricalModel::CalculateOCV(double soc) const
 {
     return 3.0 + 1.2 * soc - 0.3 * pow(soc, 2) + 0.1 * pow(soc, 3);
+}
+
+double BatteryCellElectricalModel::Calculate_dOCV_dSOC(double soc) const
+{
+    return 1.2 - 0.3 * 2 * soc + 0.1 * 3 * pow(soc, 2);
 }
 
 void BatteryCellElectricalModel::RunRCModel(double *current, double dt)
@@ -47,4 +53,9 @@ double BatteryCellElectricalModel::getVoltage() const
 double BatteryCellElectricalModel::getSOC() const
 {
     return CellSOC;
+}
+
+double BatteryCellElectricalModel::get_dOCV_dSOC() const
+{
+    return Cell_dOCV_dSOC;
 }

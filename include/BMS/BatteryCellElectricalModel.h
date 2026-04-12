@@ -12,11 +12,14 @@ private:
     double CellV1;
     double CellVoltage;
     double CellCurrent;
-
-    double CalculateOCV(double soc) const;
+    double Cell_dOCV_dSOC;
 
 public:
     BatteryCellElectricalModel();
+
+    double CalculateOCV(double soc) const;
+
+    double Calculate_dOCV_dSOC(double soc) const;
 
     BatteryCellElectricalModel(double capacityAh, double r0, double r1, double c1, double initialSOC);
 
@@ -26,7 +29,7 @@ public:
 
     double getSOC() const;
 
-    double getCurrent() const;
+    double get_dOCV_dSOC() const;
 };
 
 #endif

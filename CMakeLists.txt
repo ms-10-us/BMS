@@ -46,6 +46,7 @@ option(BMS_BUILD_APP "Build the main application" ON)
 add_subdirectory(src/BMS)
 add_subdirectory(src/ECUs)
 add_subdirectory(src/Utilities)
+add_subdirectory(src/ExtendedKalmanFilter)
 add_subdirectory(app)
 
 # 4. Build type (Release = fast, Debug = with debugger symbols)

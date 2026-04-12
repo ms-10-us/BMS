@@ -5,4 +5,5 @@ target_link_libraries(bms_app
     BatteryModel
     ECUs
     Utilities
+    ExtendedKalmanFilter
 )
