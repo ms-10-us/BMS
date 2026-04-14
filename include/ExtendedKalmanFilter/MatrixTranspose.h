@@ -16,6 +16,10 @@ public:
     void displayTranspose();
 
     double **getTranspose();
+
+    void resetObject();
+
+    ~MatrixTranspose();
 };
 
 #endif

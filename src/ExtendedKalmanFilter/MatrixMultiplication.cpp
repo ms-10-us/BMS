@@ -51,3 +51,30 @@ double **MatrixMultiplication::getResultMatrix()
 {
     return ResultMatrix;
 }
+
+void MatrixMultiplication::resetObject()
+{
+    if (ResultMatrix != nullptr)
+    {
+        for (int i = 0; i < ResultMatrixRow; i++)
+        {
+            if (ResultMatrix[i] != nullptr)
+            {
+                ResultMatrix[i] = nullptr;
+            }
+        }
+        ResultMatrix = nullptr;
+    }
+
+    ResultMatrixRow = 0;
+    ResultMatrixCol = 0;
+}
+
+MatrixMultiplication::~MatrixMultiplication()
+{
+    for (int i = 0; i < ResultMatrixRow; i++)
+    {
+        delete[] ResultMatrix[i];
+    }
+    delete[] ResultMatrix;
+}

@@ -37,3 +37,31 @@ double **MatrixTranspose::getTranspose()
 {
     return TransposedMatrix;
 }
+
+void MatrixTranspose::resetObject()
+{
+    if (TransposedMatrix != nullptr)
+    {
+        for (int i = 0; i < TransposedMatrixRow; i++)
+        {
+            if (TransposedMatrix[i] != nullptr)
+            {
+                TransposedMatrix[i] = nullptr;
+            }
+        }
+        TransposedMatrix = nullptr;
+    }
+
+    TransposedMatrixRow = 0;
+    TransposedMatrixCol = 0;
+}
+
+MatrixTranspose::~MatrixTranspose()
+{
+
+    for (int i = 0; i < TransposedMatrixRow; i++)
+    {
+        delete[] TransposedMatrix[i];
+    }
+    delete[] TransposedMatrix;
+}

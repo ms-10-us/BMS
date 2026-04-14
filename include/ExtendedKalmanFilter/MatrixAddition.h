@@ -18,6 +18,10 @@ public:
     void displayResultMatrix();
 
     double **getResultMatrix();
+
+    void resetObject();
+
+    ~MatrixAddition();
 };
 
 #endif

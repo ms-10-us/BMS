@@ -37,3 +37,31 @@ double **GainMultiplication::getResultMatrix()
 {
     return ResultMatrix;
 }
+
+void GainMultiplication::resetObject()
+{
+    if (ResultMatrix != nullptr)
+    {
+        for (int i = 0; i < ResultMatrixRow; i++)
+        {
+            if (ResultMatrix[i] != nullptr)
+            {
+                ResultMatrix[i] = nullptr;
+            }
+        }
+        ResultMatrix = nullptr;
+    }
+
+    ResultMatrixRow = 0;
+    ResultMatrixCol = 0;
+    Gain = 0.0;
+}
+
+GainMultiplication::~GainMultiplication()
+{
+    for (int i = 0; i < ResultMatrixRow; i++)
+    {
+        delete[] ResultMatrix[i];
+    }
+    delete[] ResultMatrix;
+}

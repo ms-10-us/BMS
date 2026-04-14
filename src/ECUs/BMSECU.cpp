@@ -3,7 +3,13 @@
 #include <iostream>
 #include <chrono>
 
-BMSECU::BMSECU(BatteryPack *batteryPackPtr, DTCManager *dtcManagerPtr, CANBus *canBusPtr, BatteryStateMachine *batteryStateMachinePtr, PIDController *currentPIDPtr)
+BMSECU::BMSECU(BatteryPack *batteryPackPtr,
+               DTCManager *dtcManagerPtr,
+               CANBus *canBusPtr,
+               BatteryStateMachine *batteryStateMachinePtr,
+               PIDController *currentPIDPtr,
+               ExtendedKalmanFilter &socEKF)
+    : SOCEKF(socEKF)
 {
     BatteryPackPtr = batteryPackPtr;
     DTCManagerPtr = dtcManagerPtr;

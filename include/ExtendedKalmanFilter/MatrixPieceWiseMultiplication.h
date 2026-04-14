@@ -18,6 +18,10 @@ public:
     void diplayResultMatrix();
 
     double **getResultMatrix();
+
+    void resetObject();
+
+    ~MatrixPieceWiseMutiplication();
 };
 
 #endif

@@ -47,3 +47,30 @@ double **MatrixPieceWiseMutiplication::getResultMatrix()
 {
     return ResultMatrix;
 }
+
+void MatrixPieceWiseMutiplication::resetObject()
+{
+    if (ResultMatrix != nullptr)
+    {
+        for (int i = 0; i < ResultMatrixRow; i++)
+        {
+            if (ResultMatrix[i] != nullptr)
+            {
+                ResultMatrix[i] = nullptr;
+            }
+        }
+        ResultMatrix = nullptr;
+    }
+
+    ResultMatrixRow = 0;
+    ResultMatrixCol = 0;
+}
+
+MatrixPieceWiseMutiplication::~MatrixPieceWiseMutiplication()
+{
+    for (int i = 0; i < ResultMatrixRow; i++)
+    {
+        delete[] ResultMatrix[i];
+    }
+    delete[] ResultMatrix;
+}

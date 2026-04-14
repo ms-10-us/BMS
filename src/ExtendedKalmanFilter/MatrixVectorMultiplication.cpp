@@ -47,3 +47,30 @@ double **MatrixVectorMultiplication::getResultMatrix()
 {
     return ResultMatrix;
 }
+
+void MatrixVectorMultiplication::resetObject()
+{
+    if (ResultMatrix != nullptr)
+    {
+        for (int i = 0; i < ResultMatrixRow; i++)
+        {
+            if (ResultMatrix[i] != nullptr)
+            {
+                ResultMatrix[i] = nullptr;
+            }
+        }
+        ResultMatrix = nullptr;
+    }
+
+    ResultMatrixRow = 0;
+    ResultMatrixCol = 0;
+}
+
+MatrixVectorMultiplication::~MatrixVectorMultiplication()
+{
+    for (int i = 0; i < ResultMatrixRow; i++)
+    {
+        delete[] ResultMatrix[i];
+    }
+    delete[] ResultMatrix;
+}

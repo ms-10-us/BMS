@@ -4,7 +4,7 @@ add_library(ExtendedKalmanFilter
     ExtendedKalmanFilter.cpp
     MatrixAddition.cpp
     MatrixVectorMultiplication.cpp
-    GainMultipplicaion.cpp
+    GainMultiplication.cpp
     MatrixPieceWiseMultiplication.cpp
 )
 

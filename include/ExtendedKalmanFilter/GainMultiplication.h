@@ -20,6 +20,10 @@ public:
     void displayResultMatrix();
 
     double **getResultMatrix();
+
+    void resetObject();
+
+    ~GainMultiplication();
 };
 
 #endif

@@ -8,7 +8,7 @@ class ExtendedKalmanFilter
 private:
     double SOC_estimate;
     double Voltage_measured;
-    double **StatesVector = new double *[2];
+    double *StatesVector = new double[2];
 
     double **Covariance = new double *[2];
 
