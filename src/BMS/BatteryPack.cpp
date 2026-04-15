@@ -1,51 +1,57 @@
 #include "../../include/BMS/BatteryPack.h"
 #include <iostream>
 
-BatteryPack::BatteryPack(int cellInSeries, int cellInParallel)
+BatteryPack::BatteryPack(int &cellInSeries, int &cellInParallel)
+    : CellInSeries(cellInSeries),
+      CellInParallel(cellInParallel)
 {
-    CellInSeries = cellInSeries;
-    CellInParallel = cellInParallel;
 
-    batteryPackElectricModel.resize(CellInParallel);
-    batteryPackThermalModel.resize(CellInParallel);
+    batteryPackElectricModel.reserve(CellInParallel);
+    batteryPackThermalModel.reserve(CellInParallel);
 
     for (int i = 0; i < CellInParallel; i++)
     {
-        batteryPackElectricModel[i].resize(CellInSeries);
-        batteryPackThermalModel[i].resize(CellInSeries);
+        batteryPackElectricModel.emplace_back();
+        batteryPackElectricModel[i].reserve(CellInSeries);
+
+        batteryPackThermalModel.emplace_back();
+        batteryPackElectricModel[i].reserve(CellInSeries);
 
         for (int j = 0; j < CellInSeries; j++)
         {
-
-            batteryPackElectricModel[i][j] = BatteryCellElectricalModel(
+            batteryPackElectricModel[j].emplace_back(
                 globalData.GlobalCapacityAh,
                 globalData.GlobalR0,
                 globalData.GlobalR1,
                 globalData.GlobalC1,
-                globalData.GlobalInitialSOC);
+                globalData.GlobalInitialSOC,
+                globalData.GlobalV1,
+                globalData.GlobalVoltage,
+                globalData.GlobalCurrent,
+                globalData.dOCV_dSOC);
 
-            batteryPackThermalModel[i][j] = BatteryCellThermalModel(
+            batteryPackThermalModel[j].emplace_back(
                 globalData.GlobalCellMass,
                 globalData.GlobalCellCp,
                 globalData.GlobalR1,
-                globalData.GlobalInitialTemperature);
+                globalData.GlobalInitialTemperature,
+                globalData.GlobalTemperatureIncrease);
         }
     }
 }
 
-void BatteryPack::calculateCellVoltage(double *batteryTotalCurrent)
+void BatteryPack::calculateCellVoltage(double &batteryTotalCurrent)
 {
 
     if (batteryTotalCurrent)
     {
-        double currentInSeries = *batteryTotalCurrent / (double)CellInParallel;
-        double *currentInSeriesPtr = &currentInSeries;
+        double currentInSeries = batteryTotalCurrent / (double)CellInParallel;
 
         for (int i = 0; i < CellInParallel; i++)
         {
             for (int j = 0; j < CellInSeries; j++)
             {
-                batteryPackElectricModel[i][j].RunRCModel(currentInSeriesPtr, globalData.GlobalTimeStep);
+                batteryPackElectricModel[i][j].RunRCModel(currentInSeries, globalData.GlobalTimeStep);
             }
         }
     }
@@ -78,16 +84,15 @@ double BatteryPack::getTotalVoltage() const
     return voltageTotal;
 }
 
-void BatteryPack::claculateAverageTemperature(double *batteryTotalCurrent)
+void BatteryPack::claculateAverageTemperature(double &batteryTotalCurrent)
 {
-    double currentInSeries = *batteryTotalCurrent / (double)CellInParallel;
-    double *currentInSeriesPtr = &currentInSeries;
+    double currentInSeries = batteryTotalCurrent / (double)CellInParallel;
 
     for (int i = 0; i < CellInParallel; i++)
     {
         for (int j = 0; j < CellInSeries; j++)
         {
-            batteryPackThermalModel[i][j].CalculateCellTemperature(currentInSeriesPtr, globalData.GlobalTimeStep);
+            batteryPackThermalModel[i][j].CalculateCellTemperature(currentInSeries, globalData.GlobalTimeStep);
         }
     }
 }

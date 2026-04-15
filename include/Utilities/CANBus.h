@@ -8,7 +8,7 @@ class CANBus
 public:
     CANBus();
 
-    void sendMessage(int id, const float *data);
+    void sendMessage(int id, const float &data);
 };
 
 #endif

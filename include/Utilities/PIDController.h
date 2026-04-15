@@ -6,28 +6,32 @@
 class PIDController
 {
 private:
-    double Kp, Ki, Kd;
-    double PreviousError;
-    double IntegralError;
-    double DerivativeError;
-    double *SetPointPtr;
-    double Command;
-    double *CommandPtr;
+    double &Kp, &Ki, &Kd;
+    double &SetPoint;
+    double &PreviousError;
+    double &IntegralError;
+    double &DerivativeError;
+    double &Command;
 
 public:
-    PIDController(double kp, double ki, double kd);
+    PIDController(double &kp,
+                  double &ki,
+                  double &kd,
+                  double &setPoint,
+                  double &previousError,
+                  double &integralError,
+                  double &derivativeError,
+                  double &command);
 
-    void setSetPointPtr(double *setPoint);
+    void RunPIDController(double &setPoint, double &measured, double &dt);
 
-    double *getSetPointPtr();
+    double &getCommand();
 
-    double *getCommandPtr();
-
-    void RunPIDController(double *setPoint, double *measured, double dt);
+    double &getSetPoint();
 
     void printCommand();
 
-    void ClampPIDCommand(double *commandMin, double *commandMax);
+    void ClampPIDCommand(double &commandMin, double &commandMax);
 
     void reset();
 };

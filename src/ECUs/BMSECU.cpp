@@ -3,19 +3,19 @@
 #include <iostream>
 #include <chrono>
 
-BMSECU::BMSECU(BatteryPack *batteryPackPtr,
-               DTCManager *dtcManagerPtr,
-               CANBus *canBusPtr,
-               BatteryStateMachine *batteryStateMachinePtr,
-               PIDController *currentPIDPtr,
-               ExtendedKalmanFilter &socEKF)
-    : SOCEKF(socEKF)
+BMSECU::BMSECU(BatteryPack &batteryPackReference,
+               DTCManager &dtcManagerReference,
+               CANBus &canBusReference,
+               BatteryStateMachine &batteryStateMachineReference,
+               PIDController &currentPIDReference,
+               ExtendedKalmanFilter &socEKFReference)
+    : BatteryPackReference(batteryPackReference),
+      DTCManagerReference(dtcManagerReference),
+      CanReference(canBusReference),
+      StateMachineReference(batteryStateMachineReference),
+      CurrentPIDReference(currentPIDReference),
+      SOCEKFReference(SOCEKFReference)
 {
-    BatteryPackPtr = batteryPackPtr;
-    DTCManagerPtr = dtcManagerPtr;
-    CanPtr = canBusPtr;
-    StateMachinePtr = batteryStateMachinePtr;
-    CurrentPIDPtr = currentPIDPtr;
     globalData.RunningBMS = false;
 }
 
@@ -26,56 +26,46 @@ BMSECU::~BMSECU()
 
 void BMSECU::monitorTask()
 {
-
-    if (BatteryPackPtr)
-    {
-        BatteryPackPtr->printStatus();
-    }
+    BatteryPackReference.printStatus();
 }
 
 void BMSECU::safetyTask()
 {
-    if (BatteryPackPtr)
+
+    float batteryVoltage = BatteryPackReference.getTotalVoltage();
+    float batteryTemperature = BatteryPackReference.getAverageTemperature();
+
+    DTCManagerReference.clearDTCs();
+
+    if (batteryTemperature >= 60.0)
     {
-        float batteryVoltage = BatteryPackPtr->getTotalVoltage();
-        float batteryTemperature = BatteryPackPtr->getAverageTemperature();
+        DTCManagerReference.addDTCCode(DTCCode::OverTemperature);
+    }
 
-        DTCManagerPtr->clearDTCs();
+    if (batteryVoltage < 30.0)
+    {
+        DTCManagerReference.addDTCCode(DTCCode::UnderVoltage);
+    }
 
-        if (batteryTemperature >= 60.0)
-        {
-            DTCManagerPtr->addDTCCode(DTCCode::OverTemperature);
-        }
+    if (batteryVoltage > 100)
+    {
+        DTCManagerReference.addDTCCode(DTCCode::OverVoltage);
+    }
 
-        if (batteryVoltage < 30.0)
-        {
-            DTCManagerPtr->addDTCCode(DTCCode::UnderVoltage);
-        }
-
-        if (batteryVoltage > 100)
-        {
-            DTCManagerPtr->addDTCCode(DTCCode::OverVoltage);
-        }
-
-        if (DTCManagerPtr->hasFault())
-        {
-            StateMachinePtr->handleEvent(BMSEvent::FAULT_DETECTED);
-        }
-        else
-        {
-            StateMachinePtr->handleEvent(BMSEvent::FAULT_CLEARED);
-        }
+    if (DTCManagerReference.hasFault())
+    {
+        StateMachineReference.handleEvent(BMSEvent::FAULT_DETECTED);
+    }
+    else
+    {
+        StateMachineReference.handleEvent(BMSEvent::FAULT_CLEARED);
     }
 }
 
 void BMSECU::canTask()
 {
-
-    if (BatteryPackPtr)
-    {
-        float batteryVoltage = BatteryPackPtr->getTotalVoltage();
-        CanPtr->sendMessage(0x100, &batteryVoltage);
-    }
+    float batteryVoltage = BatteryPackReference.getTotalVoltage();
+    CanReference.sendMessage(0x100, batteryVoltage);
 }
 
 void BMSECU::StopAllTasks()
@@ -89,13 +79,13 @@ void BMSECU::currentControl(BMSEvent bmsEvent)
     {
         globalData.RunningBMS = true;
 
-        StateMachinePtr->handleEvent(bmsEvent);
+        StateMachineReference.handleEvent(bmsEvent);
 
-        CurrentPIDPtr->RunPIDController(CurrentPIDPtr->getSetPointPtr(), CurrentPIDPtr->getCommandPtr(), globalData.GlobalTimeStep);
-        CurrentPIDPtr->ClampPIDCommand(&globalData.GlobalPIDCurrentMinCommand, &globalData.GlobalPIDCurrentMaxCommand);
-        CurrentPIDPtr->printCommand();
-        BatteryPackPtr->calculateCellVoltage(CurrentPIDPtr->getCommandPtr());
-        BatteryPackPtr->claculateAverageTemperature(CurrentPIDPtr->getCommandPtr());
+        CurrentPIDReference.RunPIDController(CurrentPIDReference.getSetPoint(), CurrentPIDReference.getCommand(), globalData.GlobalTimeStep);
+        CurrentPIDReference.ClampPIDCommand(globalData.GlobalPIDCurrentMinCommand, globalData.GlobalPIDCurrentMaxCommand);
+        CurrentPIDReference.printCommand();
+        BatteryPackReference.calculateCellVoltage(CurrentPIDReference.getCommand());
+        BatteryPackReference.claculateAverageTemperature(CurrentPIDReference.getCommand());
         monitorTask();
         safetyTask();
         canTask();
@@ -103,7 +93,7 @@ void BMSECU::currentControl(BMSEvent bmsEvent)
     else
     {
         globalData.RunningBMS = false;
-        StateMachinePtr->handleEvent(bmsEvent);
+        StateMachineReference.handleEvent(bmsEvent);
         BMSECU::~BMSECU();
     }
 }

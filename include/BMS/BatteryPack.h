@@ -12,17 +12,17 @@ class BatteryPack
 private:
     std::vector<std::vector<BatteryCellElectricalModel>> batteryPackElectricModel;
     std::vector<std::vector<BatteryCellThermalModel>> batteryPackThermalModel;
-    int CellInSeries;
-    int CellInParallel;
+    int &CellInSeries;
+    int &CellInParallel;
 
 public:
-    BatteryPack(int cellInSeries, int cellInParallel);
+    BatteryPack(int &cellInSeries, int &cellInParallel);
 
-    void calculateCellVoltage(double *batteryTotalCurrent);
+    void calculateCellVoltage(double &batteryTotalCurrent);
 
     double getTotalVoltage() const;
 
-    void claculateAverageTemperature(double *batteryTotalCurrent);
+    void claculateAverageTemperature(double &batteryTotalCurrent);
 
     double getAverageTemperature();
 
