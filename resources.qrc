@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/LoadCycleData.png</file>
+    </qresource>
+</RCC>

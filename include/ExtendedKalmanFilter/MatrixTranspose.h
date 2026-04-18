@@ -11,7 +11,7 @@ private:
 public:
     MatrixTranspose();
 
-    void Transpose(const double **matrix);
+    void Transpose(double **matrix);
 
     void displayTranspose();
 

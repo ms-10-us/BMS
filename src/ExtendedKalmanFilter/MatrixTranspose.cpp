@@ -1,10 +1,10 @@
-#include "../../include/ExtendedKalmanFilter/MaxtrixTranspose.h"
+#include "../../include/ExtendedKalmanFilter/MatrixTranspose.h"
 
 #include <iostream>
 
 MatrixTranspose::MatrixTranspose() = default;
 
-void MatrixTranspose::Transpose(const double **matrix)
+void MatrixTranspose::Transpose(double **matrix)
 {
     int matrixRow = sizeof(matrix) / sizeof(matrix[0]);
     int matrixCol = sizeof(matrix[0]) / sizeof(matrix[0][0]);
