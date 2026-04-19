@@ -9,9 +9,8 @@
 #include <QCheckBox>
 #include "../dataParser/DataParse.h"
 #include "mainwindow.h"
-#include "CommanWindowFunctionality.h"
 
-class LoadCycleWindow : public QDialog, CommanWindowFunctionality
+class LoadCycleWindow : public QDialog
 {
     Q_OBJECT
 private:
@@ -30,6 +29,9 @@ public:
     LoadCycleWindow(QWidget *parent = nullptr);
 
     ~LoadCycleWindow();
+
+signals:
+    void logMessage(const QString &message);
 };
 
 #endif

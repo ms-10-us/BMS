@@ -3,10 +3,12 @@
 
 #include <QMainWindow>
 #include <QToolButton>
+#include <QPlainTextEdit>
 #include "../dataParser/DataParse.h"
-#include "CommanWindowFunctionality.h"
 
-class MainWindow : public QMainWindow, CommanWindowFunctionality
+class LoadCycleWindow;
+
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -15,12 +17,16 @@ private:
 
     DataParse *ParsedData = nullptr;
 
+    QPlainTextEdit *ConsoleOutput;
+
     void openLoadCycleWindow();
 
 public:
     MainWindow(QWidget *parent = nullptr);
 
     ~MainWindow();
+
+    void log(const QString &msg);
 };
 
 #endif

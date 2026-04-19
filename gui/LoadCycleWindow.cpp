@@ -1,12 +1,19 @@
-#include "LoadCycleWindow.h"
-#include "mainwindow.h"
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDialog>
+#include <QVBoxLayout>
+#include "LoadCycleWindow.h"
 
-LoadCycleWindow::LoadCycleWindow(QWidget *parent) : QDialog(parent), CommanWindowFunctionality()
+LoadCycleWindow::LoadCycleWindow(QWidget *parent) : QDialog(parent)
 {
     setWindowTitle("Load Cycle Window");
+    this->setStyleSheet(
+        "LoadCycleWindow {"
+        "  background-color: #E0F2F7;" /* Light Blue */
+        "  border: 2px solid #005577;" /* Darker blue border */
+        "}");
     resize(1200, 750);
+    setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
     QVBoxLayout *loadCycleLayout = new QVBoxLayout(this);
     FilePathEdit = new QLineEdit();
@@ -42,7 +49,8 @@ void LoadCycleWindow::onParseClicked()
     if (file.isEmpty())
     {
         QMessageBox::warning(this, "Warning", "Select a CSV file first.");
-        log(QString("Warning: Select a CSV file first."));
+        emit logMessage("Warning: Select a CSV file first.");
+        // log(QString("Warning: Select a CSV file first."));
         return;
     }
 
@@ -50,12 +58,13 @@ void LoadCycleWindow::onParseClicked()
     {
         delete CycleData;
         CycleData = new DataParse(file.toStdString(), CheckHeader->isChecked());
-
-        log(QString("Parse %1 rows x %2 columns").arg(CycleData->getRowNumber()).arg(CycleData->getColNumber()));
+        emit logMessage(QString("Parse %1 rows x %2 columns").arg(CycleData->getRowNumber()).arg(CycleData->getColNumber()));
+        // log(QString("Parse %1 rows x %2 columns").arg(CycleData->getRowNumber()).arg(CycleData->getColNumber()));
     }
     catch (const std::exception &e)
     {
-        log("Error: " + QString::fromStdString(e.what()));
+        // log("Error: " + QString::fromStdString(e.what()));
+        emit logMessage("Error: " + QString::fromStdString(e.what()));
     }
 }
 
