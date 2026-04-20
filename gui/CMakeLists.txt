@@ -7,6 +7,7 @@ qt_standard_project_setup()
 add_library(GUI
     mainwindow.cpp
     LoadCycleWindow.cpp
+    IconCreator.cpp
     )
 
 # Include directories

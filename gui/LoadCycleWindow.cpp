@@ -50,7 +50,6 @@ void LoadCycleWindow::onParseClicked()
     {
         QMessageBox::warning(this, "Warning", "Select a CSV file first.");
         emit logMessage("Warning: Select a CSV file first.");
-        // log(QString("Warning: Select a CSV file first."));
         return;
     }
 
@@ -58,12 +57,13 @@ void LoadCycleWindow::onParseClicked()
     {
         delete CycleData;
         CycleData = new DataParse(file.toStdString(), CheckHeader->isChecked());
+
+        emit sendCycleData(CycleData);
+
         emit logMessage(QString("Parse %1 rows x %2 columns").arg(CycleData->getRowNumber()).arg(CycleData->getColNumber()));
-        // log(QString("Parse %1 rows x %2 columns").arg(CycleData->getRowNumber()).arg(CycleData->getColNumber()));
     }
     catch (const std::exception &e)
     {
-        // log("Error: " + QString::fromStdString(e.what()));
         emit logMessage("Error: " + QString::fromStdString(e.what()));
     }
 }

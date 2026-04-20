@@ -4,7 +4,9 @@
 #include <QMainWindow>
 #include <QToolButton>
 #include <QPlainTextEdit>
+#include <QListWidget>
 #include "../dataParser/DataParse.h"
+#include "../include/Utilities/PlottingTool.h"
 
 class LoadCycleWindow;
 
@@ -13,20 +15,22 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 private:
-    QToolButton *LoadCycleIcon = nullptr;
-
-    DataParse *ParsedData = nullptr;
-
     QPlainTextEdit *ConsoleOutput;
 
+    QListWidget *VariableListWidget = nullptr;
+
+    // PlottingTool PlottingToolObject;
+
     void openLoadCycleWindow();
+
+    void onPlotSelected();
 
 public:
     MainWindow(QWidget *parent = nullptr);
 
-    ~MainWindow();
-
     void log(const QString &msg);
+
+    void loadCycleData(const DataParse *data);
 };
 
 #endif

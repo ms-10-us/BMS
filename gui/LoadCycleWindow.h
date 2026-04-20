@@ -32,6 +32,8 @@ public:
 
 signals:
     void logMessage(const QString &message);
+
+    void sendCycleData(const DataParse *data);
 };
 
 #endif
