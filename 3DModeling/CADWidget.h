@@ -1,0 +1,31 @@
+#ifndef CADWIDGET_H
+#define CADWIDGET_H
+
+#include <AIS_InteractiveContext.hxx>
+#include <QWidget>
+#include <V3d_View.hxx>
+#include <V3d_Viewer.hxx>
+
+class CADWidget : public QWidget
+{
+  Q_OBJECT
+
+public:
+  explicit CADWidget(QWidget *parent = nullptr);
+
+  void loadStep(const std::string &path);
+
+protected:
+  void paintEvent(QPaintEvent *paintEvent) override;
+
+  void resizeEvent(QResizeEvent *resizeEvent) override;
+
+  void showEvent(QShowEvent *event) override;
+
+private:
+  Handle(V3d_View) view;
+
+  Handle(AIS_InteractiveContext) context;
+};
+
+#endif

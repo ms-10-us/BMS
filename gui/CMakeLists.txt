@@ -17,4 +17,10 @@ target_include_directories(GUI
 )
 
 # Link Qt libraries
-target_link_libraries(GUI PRIVATE Qt6::Core Qt6::Widgets)
+target_link_libraries(GUI 
+    PRIVATE 
+    Qt6::Core 
+    Qt6::Widgets
+    Utilities
+    ObjectModel
+    )

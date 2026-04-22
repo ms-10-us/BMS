@@ -20,4 +20,5 @@ target_link_libraries(bms_app
     DataParser
     Qt6::Core 
     Qt6::Widgets
+    ObjectModel
 )

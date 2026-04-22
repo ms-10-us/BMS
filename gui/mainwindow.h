@@ -19,7 +19,9 @@ private:
 
     QListWidget *VariableListWidget = nullptr;
 
-    // PlottingTool PlottingToolObject;
+    PlottingTool PlottingToolObject;
+
+    DataParse *MainWindowData;
 
     void openLoadCycleWindow();
 
@@ -30,7 +32,7 @@ public:
 
     void log(const QString &msg);
 
-    void loadCycleData(const DataParse *data);
+    void loadCycleData(DataParse *data);
 };
 
 #endif

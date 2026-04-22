@@ -42,6 +42,7 @@ void PlottingTool::plot() const
     {
         plt::figure(FigureNumber);
         plt::plot(Xpoints, Ypoints, LineStyle);
+        plt::show();
     }
 }
 

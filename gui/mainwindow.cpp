@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "LoadCycleWindow.h"
 #include "IconCreator.h"
+#include "../3DModeling/CADWidget.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <algorithm>
@@ -40,23 +41,25 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QSplitter *splitter = new QSplitter(Qt::Horizontal, this);
     splitter->setHandleWidth(6);
 
-    // --- Left Area (where your plot will go) ---
-    QWidget *leftArea = new QWidget(this);
-    QVBoxLayout *leftLayout = new QVBoxLayout(leftArea);
+    // --- Left Area (CAD Widget) ---
+    QWidget *letftContainer = new QWidget(this);
+    QVBoxLayout *leftLayout = new QVBoxLayout(letftContainer);
     leftLayout->setContentsMargins(0, 0, 0, 0);
 
-    QLabel *plotPlaceholder = new QLabel(
-        "Plot Area\n\n"
-        "• Load a CSV file\n"
-        "• Select variables on the right\n"
-        "• Click 'Plot Selected'",
-        this);
-    plotPlaceholder->setAlignment(Qt::AlignCenter);
-    plotPlaceholder->setStyleSheet(
-        "background-color: #f8f9fa; "
-        "border: 2px dashed #aaa; "
-        "font-size: 15px; color: #555; padding: 40px;");
-    leftLayout->addWidget(plotPlaceholder, 1);
+    CADWidget *cadWidget = new CADWidget(letftContainer);
+    leftLayout->addWidget(cadWidget, 1);
+    // QLabel *plotPlaceholder = new QLabel(
+    //     "Plot Area\n\n"
+    //     "• Load a CSV file\n"
+    //     "• Select variables on the right\n"
+    //     "• Click 'Plot Selected'",
+    //     this);
+    // plotPlaceholder->setAlignment(Qt::AlignCenter);
+    // plotPlaceholder->setStyleSheet(
+    //     "background-color: #f8f9fa; "
+    //     "border: 2px dashed #aaa; "
+    //     "font-size: 15px; color: #555; padding: 40px;");
+    // leftLayout->addWidget(plotPlaceholder, 1);
 
     // Right Panel
     QWidget *rightPanel = new QWidget(this);
@@ -73,7 +76,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     rightPanelLayout->addWidget(rightPanelLabel);
     rightPanelLayout->addWidget(VariableListWidget, 1);
 
-    splitter->addWidget(leftArea);
+    splitter->addWidget(letftContainer);
     splitter->addWidget(rightPanel);
 
     splitter->setStretchFactor(0, 5);
@@ -91,6 +94,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     mainLayout->addWidget(ConsoleOutput);
 
     connect(LoadCycleIcon, &QPushButton::clicked, this, &MainWindow::openLoadCycleWindow);
+    connect(PlotDataIcon, &QPushButton::clicked, this, &MainWindow::onPlotSelected);
 
     log("Application Ready");
 }
@@ -112,8 +116,9 @@ void MainWindow::log(const QString &msg)
     ConsoleOutput->appendPlainText("[" + ts + "]" + msg);
 }
 
-void MainWindow::loadCycleData(const DataParse *data)
+void MainWindow::loadCycleData(DataParse *data)
 {
+    MainWindowData = data;
     VariableListWidget->clear();
 
     const std::vector<std::string> &colNames = data->getColumnNames();
@@ -125,10 +130,27 @@ void MainWindow::loadCycleData(const DataParse *data)
 
 void MainWindow::onPlotSelected()
 {
+    PlottingToolObject.resetPlottingTool();
+
     QList<QListWidgetItem *> selectedVaraiables = VariableListWidget->selectedItems();
     if (selectedVaraiables.size() < 2)
     {
         QMessageBox::warning(this, "Selection", "Please select at least two variables (X and Y).");
+        log("Please select at least two variables (X and Y).");
         return;
     }
+
+    std::string xName = selectedVaraiables[0]->text().toStdString();
+    std::string yName = selectedVaraiables[1]->text().toStdString();
+
+    const std::vector<double> xIdx = MainWindowData->getColumn(xName);
+    const std::vector<double> yIdx = MainWindowData->getColumn(yName);
+
+    PlottingToolObject = PlottingTool(xName, yName, yName + " vs " + xName, "b-", 1);
+
+    for (int i = 0; i < MainWindowData->getRowNumber(); i++)
+    {
+        PlottingToolObject.addPoint(xIdx[i], yIdx[i]);
+    }
+    PlottingToolObject.plot();
 }
