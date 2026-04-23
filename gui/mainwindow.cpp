@@ -2,6 +2,7 @@
 #include "LoadCycleWindow.h"
 #include "IconCreator.h"
 #include "../3DModeling/CADWidget.h"
+#include "../3DModeling/BatteryCADModel.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <algorithm>
@@ -42,11 +43,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     splitter->setHandleWidth(6);
 
     // --- Left Area (CAD Widget) ---
-    QWidget *letftContainer = new QWidget(this);
-    QVBoxLayout *leftLayout = new QVBoxLayout(letftContainer);
+    QWidget *leftContainer = new QWidget(this);
+    QVBoxLayout *leftLayout = new QVBoxLayout(leftContainer);
     leftLayout->setContentsMargins(0, 0, 0, 0);
 
-    CADWidget *cadWidget = new CADWidget(letftContainer);
+    QLabel *leftPanelLabel = new QLabel("Battery CAD Model", leftContainer);
+    leftPanelLabel->setStyleSheet({"font-weight: bold; padding: 8px;"});
+    leftLayout->addWidget(leftPanelLabel);
+
+    CADWidget *cadWidget = new CADWidget(leftContainer);
+    BatteryCADModel batteryCADModel = BatteryCADModel();
+    batteryCADModel.generateBatteryCADModel("battery_pack.step");
+    cadWidget->loadStep("battery_pack.step");
     leftLayout->addWidget(cadWidget, 1);
     // QLabel *plotPlaceholder = new QLabel(
     //     "Plot Area\n\n"
@@ -64,8 +72,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     // Right Panel
     QWidget *rightPanel = new QWidget(this);
     QVBoxLayout *rightPanelLayout = new QVBoxLayout(rightPanel);
-    rightPanelLayout->setContentsMargins(10, 10, 10, 10);
-    rightPanelLayout->setSpacing(8);
+    rightPanelLayout->setContentsMargins(0, 0, 0, 0);
+    // rightPanelLayout->setSpacing(8);
 
     QLabel *rightPanelLabel = new QLabel("Parsed Variables", rightPanel);
     rightPanelLabel->setStyleSheet({"font-weight: bold; padding: 8px;"});
@@ -76,13 +84,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     rightPanelLayout->addWidget(rightPanelLabel);
     rightPanelLayout->addWidget(VariableListWidget, 1);
 
-    splitter->addWidget(letftContainer);
+    splitter->addWidget(leftContainer);
     splitter->addWidget(rightPanel);
 
     splitter->setStretchFactor(0, 5);
     splitter->setSizes({820, 280});
 
-    mainLayout->addWidget(splitter, 1);
+    mainLayout->addWidget(splitter, 10);
 
     // Console
     new QLabel("Console:");
@@ -91,7 +99,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     ConsoleOutput->setMaximumHeight(180);
     QFont font("Monospace", 9);
     ConsoleOutput->setFont(font);
-    mainLayout->addWidget(ConsoleOutput);
+    mainLayout->addWidget(ConsoleOutput, 1);
 
     connect(LoadCycleIcon, &QPushButton::clicked, this, &MainWindow::openLoadCycleWindow);
     connect(PlotDataIcon, &QPushButton::clicked, this, &MainWindow::onPlotSelected);

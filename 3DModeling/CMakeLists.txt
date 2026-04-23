@@ -5,7 +5,7 @@ qt_standard_project_setup()
 
 add_library(ObjectModel
     CADWidget.cpp
-    CADWidget.h
+    BatteryCADModel.cpp
 )
 
 target_include_directories(ObjectModel PUBLIC
