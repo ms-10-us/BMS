@@ -29,8 +29,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QHBoxLayout *topBarHorizontalLayout = new QHBoxLayout();
     IconCreator iconCreator = IconCreator();
 
-    QToolButton *LoadCycleIcon = iconCreator.CreateIcon(":/icons/LoadCycleData.png", 64, "Open Load Cycle Settings");
-    QToolButton *PlotDataIcon = iconCreator.CreateIcon(":/icons/PlotData.png", 64, "Plot Data");
+    QToolButton *LoadCycleIcon = iconCreator.CreateIcon(":/icons/LoadCycleData.png", 100, "Open Load Cycle Settings");
+    QToolButton *PlotDataIcon = iconCreator.CreateIcon(":/icons/PlotData.png", 100, "Plot Data");
 
     topBarHorizontalLayout->addWidget(LoadCycleIcon);
     topBarHorizontalLayout->addWidget(PlotDataIcon);
@@ -161,4 +161,6 @@ void MainWindow::onPlotSelected()
         PlottingToolObject.addPoint(xIdx[i], yIdx[i]);
     }
     PlottingToolObject.plot();
+
+    log("Plot Generated");
 }

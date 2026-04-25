@@ -23,6 +23,8 @@ public:
                   double &derivativeError,
                   double &command);
 
+    void setSetPoint(double &setPoint);
+
     void RunPIDController(double &setPoint, double &measured, double &dt);
 
     double &getCommand();

@@ -3,12 +3,12 @@
 #include <iostream>
 #include <chrono>
 
-BMSECU::BMSECU(BatteryPack &batteryPackReference,
-               DTCManager &dtcManagerReference,
-               CANBus &canBusReference,
-               BatteryStateMachine &batteryStateMachineReference,
-               PIDController &currentPIDReference,
-               ExtendedKalmanFilter &socEKFReference)
+BMSECU::BMSECU(BatteryPack *batteryPackReference,
+               DTCManager *dtcManagerReference,
+               CANBus *canBusReference,
+               BatteryStateMachine *batteryStateMachineReference,
+               PIDController *currentPIDReference,
+               ExtendedKalmanFilter *socEKFReference)
     : BatteryPackReference(batteryPackReference),
       DTCManagerReference(dtcManagerReference),
       CanReference(canBusReference),
@@ -26,46 +26,46 @@ BMSECU::~BMSECU()
 
 void BMSECU::monitorTask()
 {
-    BatteryPackReference.printStatus();
+    BatteryPackReference->printStatus();
 }
 
 void BMSECU::safetyTask()
 {
 
-    float batteryVoltage = BatteryPackReference.getTotalVoltage();
-    float batteryTemperature = BatteryPackReference.getAverageTemperature();
+    float batteryVoltage = BatteryPackReference->getTotalVoltage();
+    float batteryTemperature = BatteryPackReference->getAverageTemperature();
 
-    DTCManagerReference.clearDTCs();
+    DTCManagerReference->clearDTCs();
 
     if (batteryTemperature >= 60.0)
     {
-        DTCManagerReference.addDTCCode(DTCCode::OverTemperature);
+        DTCManagerReference->addDTCCode(DTCCode::OverTemperature);
     }
 
     if (batteryVoltage < 30.0)
     {
-        DTCManagerReference.addDTCCode(DTCCode::UnderVoltage);
+        DTCManagerReference->addDTCCode(DTCCode::UnderVoltage);
     }
 
     if (batteryVoltage > 100)
     {
-        DTCManagerReference.addDTCCode(DTCCode::OverVoltage);
+        DTCManagerReference->addDTCCode(DTCCode::OverVoltage);
     }
 
-    if (DTCManagerReference.hasFault())
+    if (DTCManagerReference->hasFault())
     {
-        StateMachineReference.handleEvent(BMSEvent::FAULT_DETECTED);
+        StateMachineReference->handleEvent(BMSEvent::FAULT_DETECTED);
     }
     else
     {
-        StateMachineReference.handleEvent(BMSEvent::FAULT_CLEARED);
+        StateMachineReference->handleEvent(BMSEvent::FAULT_CLEARED);
     }
 }
 
 void BMSECU::canTask()
 {
-    float batteryVoltage = BatteryPackReference.getTotalVoltage();
-    CanReference.sendMessage(0x100, batteryVoltage);
+    float batteryVoltage = BatteryPackReference->getTotalVoltage();
+    CanReference->sendMessage(0x100, batteryVoltage);
 }
 
 void BMSECU::StopAllTasks()
@@ -79,13 +79,13 @@ void BMSECU::currentControl(BMSEvent bmsEvent)
     {
         globalData.RunningBMS = true;
 
-        StateMachineReference.handleEvent(bmsEvent);
+        StateMachineReference->handleEvent(bmsEvent);
 
-        CurrentPIDReference.RunPIDController(CurrentPIDReference.getSetPoint(), CurrentPIDReference.getCommand(), globalData.GlobalTimeStep);
-        CurrentPIDReference.ClampPIDCommand(globalData.GlobalPIDCurrentMinCommand, globalData.GlobalPIDCurrentMaxCommand);
-        CurrentPIDReference.printCommand();
-        BatteryPackReference.calculateCellVoltage(CurrentPIDReference.getCommand());
-        BatteryPackReference.claculateAverageTemperature(CurrentPIDReference.getCommand());
+        CurrentPIDReference->RunPIDController(CurrentPIDReference->getSetPoint(), CurrentPIDReference->getCommand(), globalData.GlobalTimeStep);
+        CurrentPIDReference->ClampPIDCommand(globalData.GlobalPIDCurrentMinCommand, globalData.GlobalPIDCurrentMaxCommand);
+        CurrentPIDReference->printCommand();
+        BatteryPackReference->calculateCellVoltage(CurrentPIDReference->getCommand());
+        BatteryPackReference->claculateAverageTemperature(CurrentPIDReference->getCommand());
         monitorTask();
         safetyTask();
         canTask();
@@ -93,7 +93,7 @@ void BMSECU::currentControl(BMSEvent bmsEvent)
     else
     {
         globalData.RunningBMS = false;
-        StateMachineReference.handleEvent(bmsEvent);
+        StateMachineReference->handleEvent(bmsEvent);
         BMSECU::~BMSECU();
     }
 }

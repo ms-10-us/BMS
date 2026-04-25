@@ -11,24 +11,24 @@
 class BMSECU
 {
 private:
-    BatteryPack &BatteryPackReference;
-    DTCManager &DTCManagerReference;
-    CANBus &CanReference;
-    BatteryStateMachine &StateMachineReference;
-    PIDController &CurrentPIDReference;
-    ExtendedKalmanFilter &SOCEKFReference;
+    BatteryPack *BatteryPackReference;
+    DTCManager *DTCManagerReference;
+    CANBus *CanReference;
+    BatteryStateMachine *StateMachineReference;
+    PIDController *CurrentPIDReference;
+    ExtendedKalmanFilter *SOCEKFReference;
 
     void monitorTask();
     void safetyTask();
     void canTask();
 
 public:
-    BMSECU(BatteryPack &batteryPackReference,
-           DTCManager &dtcManagerReference,
-           CANBus &canBusReference,
-           BatteryStateMachine &batteryStateMachineReference,
-           PIDController &currentPIDReference,
-           ExtendedKalmanFilter &socEKFReference);
+    BMSECU(BatteryPack *batteryPackReference,
+           DTCManager *dtcManagerReference,
+           CANBus *canBusReference,
+           BatteryStateMachine *batteryStateMachineReference,
+           PIDController *currentPIDReference,
+           ExtendedKalmanFilter *socEKFReference);
 
     ~BMSECU();
 

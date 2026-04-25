@@ -18,9 +18,10 @@ void BatteryCellThermalModel::CalculateCellTemperature(double &current, double &
 {
     double dTdt = (1 / (CellMass * CellCp)) * pow(current, 2) * CellResistance;
     DeltaCellTemperature += dTdt * timeStep;
+    CellTemperature += DeltaCellTemperature;
 }
 
 double &BatteryCellThermalModel::getTemperature() const
 {
-    return DeltaCellTemperature;
+    return CellTemperature;
 }

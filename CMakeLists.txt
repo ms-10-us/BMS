@@ -50,6 +50,7 @@ add_subdirectory(src/ExtendedKalmanFilter)
 add_subdirectory(dataParser)
 add_subdirectory(gui)
 add_subdirectory(3DModeling)
+add_subdirectory(src/RunComputation)
 add_subdirectory(app)
 
 # 4. Build type (Release = fast, Debug = with debugger symbols)

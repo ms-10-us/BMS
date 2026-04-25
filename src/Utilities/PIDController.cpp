@@ -20,6 +20,11 @@ PIDController::PIDController(double &kp,
 {
 }
 
+void PIDController::setSetPoint(double &setPoint)
+{
+    SetPoint = setPoint;
+}
+
 void PIDController::RunPIDController(double &setPoint, double &measured, double &dt)
 {
 

@@ -30,6 +30,16 @@ struct GlobalVariables
     bool RunningBMS = false;                 // no units
     double GlobalPIDCurrentMinCommand = 0.0; // A
     double GlobalPIDCurrentMaxCommand = 5.0; // A
+    double GlobalCurrentKp = 1.15;           // No Unit
+    double GlobalCurrentKi = 0.61;           // No Unit
+    double GlobalCurrentKd = 0.01;           // No Unit
+    double InitialPIDSetpoint = 0.0;         // No Unit
+    double InintialPreviousError = 0.0;      // No Unit
+    double InitialIntegralError = 0.0;       // No Unit
+    double InitialDerivativeError = 0.0;     // No Unit
+    double InitalCommand = 0.0;              // No Unit
+    int CellInSeries = 3;                    // No Unit
+    int CellInParallel = 4;                  // No Unit
     std::mutex MatplotLibCppMutex;           // no units
 };
 

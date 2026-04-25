@@ -18,13 +18,21 @@ private:
 public:
     BatteryPack(int &cellInSeries, int &cellInParallel);
 
+    double getCellCurrent(double &totalCurrent);
+
     void calculateCellVoltage(double &batteryTotalCurrent);
+
+    double &getCellVolatge(int cellRow, int cellCol);
 
     double getTotalVoltage() const;
 
     void claculateAverageTemperature(double &batteryTotalCurrent);
 
     double getAverageTemperature();
+
+    double &getCellTemperature(int cellRow, int cellCol);
+
+    BatteryCellElectricalModel &getBatteryCellElectricalModel(int cellRow, int cellCol);
 
     double getAverageSOC();
 
