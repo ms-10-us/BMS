@@ -24,7 +24,7 @@ public:
         double &voltagePredicted,
         double &voltageMeasured,
         double &timeStep,
-        BatteryCellElectricalModel &batteryCellElectricalModel);
+        BatteryCellElectricalModel *batteryCellElectricalModel);
 
     double getSOC() const;
 };

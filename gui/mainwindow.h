@@ -21,11 +21,13 @@ private:
 
     PlottingTool PlottingToolObject;
 
-    DataParse *MainWindowData;
+    DataParse *MainWindowData = nullptr;
 
     void openLoadCycleWindow();
 
     void onPlotSelected();
+
+    void onRunSimulation();
 
 public:
     MainWindow(QWidget *parent = nullptr);

@@ -10,8 +10,8 @@
 class BatteryPack
 {
 private:
-    std::vector<std::vector<BatteryCellElectricalModel>> batteryPackElectricModel;
-    std::vector<std::vector<BatteryCellThermalModel>> batteryPackThermalModel;
+    std::vector<std::vector<BatteryCellElectricalModel *>> batteryPackElectricModel;
+    std::vector<std::vector<BatteryCellThermalModel *>> batteryPackThermalModel;
     int &CellInSeries;
     int &CellInParallel;
 
@@ -32,11 +32,15 @@ public:
 
     double &getCellTemperature(int cellRow, int cellCol);
 
-    BatteryCellElectricalModel &getBatteryCellElectricalModel(int cellRow, int cellCol);
+    BatteryCellElectricalModel *getBatteryCellElectricalModel(int cellRow, int cellCol);
 
     double getAverageSOC();
 
     void printStatus();
+
+    int &getCellInSeries();
+
+    int &getCellInParallel();
 };
 
 #endif

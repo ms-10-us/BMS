@@ -17,8 +17,8 @@ ExtendedKalmanFilter::ExtendedKalmanFilter(double initialSOC)
 
     for (int i = 0; i < 2; i++)
     {
-        Covariance[2] = new double[2];
-        Noise[2] = new double[2];
+        Covariance[i] = new double[2];
+        Noise[i] = new double[2];
     }
 
     for (int i = 0; i < 2; i++)
@@ -46,7 +46,7 @@ void ExtendedKalmanFilter::runExtendedKalmanFilter(
     double &voltagePredicted,
     double &voltageMeasured,
     double &timeStep,
-    BatteryCellElectricalModel &batteryCellElectricalModel)
+    BatteryCellElectricalModel *batteryCellElectricalModel)
 {
     StatesVector[0] = StatesVector[0] - (current * timeStep) / (globalData.GlobalCapacityAh * 3600.0);
     StatesVector[1] = StatesVector[1] * std::exp(-1 * timeStep / (globalData.GlobalR1 * globalData.GlobalC1)) +
@@ -87,10 +87,10 @@ void ExtendedKalmanFilter::runExtendedKalmanFilter(
     Covariance = matrixAddition.getResultMatrix();
     matrixAddition.resetObject();
 
-    batteryCellElectricalModel.CalculateOCV(StatesVector[0]);
-    batteryCellElectricalModel.Calculate_dOCV_dSOC(StatesVector[0]);
+    batteryCellElectricalModel->CalculateOCV(StatesVector[0]);
+    batteryCellElectricalModel->Calculate_dOCV_dSOC(StatesVector[0]);
 
-    double jacobianH[2] = {batteryCellElectricalModel.get_dOCV_dSOC(), -1.0};
+    double jacobianH[2] = {batteryCellElectricalModel->get_dOCV_dSOC(), -1.0};
     double *jacobianHPtr = new double[2];
     for (int i = 0; i < 2; i++)
     {

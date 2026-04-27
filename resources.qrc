@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>icons/LoadCycleData.png</file>
         <file>icons/PlotData.png</file>
+        <file>icons/RunSimulation.png</file>
     </qresource>
 </RCC>

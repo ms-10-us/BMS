@@ -10,9 +10,12 @@
 #include "../../include/ECUs/BMSECU.h"
 #include "../../include/ExtendedKalmanFilter/ExtendedKalmanFilter.h"
 #include <QString>
+#include <QObject>
 
-class Simulation
+class Simulation : public QObject
 {
+    Q_OBJECT
+
 private:
     DataParse *SimulationData = nullptr;
 
@@ -30,14 +33,24 @@ private:
 
     BMSECU *BMSECUPtr = nullptr;
 
-    std::vector<std::vector<double>> ResultData;
+    std::vector<std::vector<double>> CurrentResultData;
+
+    std::vector<std::vector<double>> VoltageResultData;
+
+    std::vector<std::vector<double>> TemperatureResultData;
+
+    std::vector<std::vector<double>> SOCResultData;
+
+    bool isSimulationReady = false;
 
 public:
-    Simulation(DataParse *parsedData);
+    Simulation(DataParse *parsedData, QObject *parent = nullptr);
 
     void RunSimulation();
 
-    ~Simulation();
+    bool &getIsSimulationReady();
+
+    // ~Simulation();
 
 signals:
     void logMessage(const QString &message);

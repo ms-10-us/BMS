@@ -2,16 +2,17 @@
 #include "../../include/Utilities/GlobalVariables.h"
 #include <vector>
 
-Simulation::Simulation(DataParse *parsedData)
+Simulation::Simulation(DataParse *parsedData, QObject *parent)
+    : QObject(parent),
+      SimulationData(parsedData)
 {
-    if (parsedData == nullptr)
+    if (SimulationData == nullptr)
     {
-        throw std::invalid_argument("Data Must be Parsed Before Simulation Starts");
-        emit logMessage("Data Must be Parsed Before Simulation Starts");
+        isSimulationReady = false;
         return;
     }
 
-    SimulationData = parsedData;
+    isSimulationReady = true;
 
     CurrentPIDController = new PIDController(globalData.GlobalCurrentKp,
                                              globalData.GlobalCurrentKi,
@@ -53,21 +54,29 @@ void Simulation::RunSimulation()
     std::vector<double> timeStamp = SimulationData->getColumn("timestamp_ms");
     std::vector<double> cellVoltage = SimulationData->getColumn("cell1_V");
 
+    int vectorSize = SimulationData->getRowNumber();
+
     for (int i = 0; i < SimulationData->getRowNumber(); i++)
     {
         CurrentPIDController->RunPIDController(currentSetPoint[i], CurrentPIDController->getCommand(), globalData.GlobalTimeStep);
         double cellCurrent = BatteryPackPtr->getCellCurrent(CurrentPIDController->getCommand());
-        ResultData[0].push_back(cellCurrent);
+
+        CurrentResultData.resize(BatteryPackPtr->getCellInSeries() * BatteryPackPtr->getCellInParallel());
+        VoltageResultData.resize(BatteryPackPtr->getCellInSeries() * BatteryPackPtr->getCellInParallel());
+        TemperatureResultData.resize(BatteryPackPtr->getCellInSeries() * BatteryPackPtr->getCellInParallel());
+        SOCResultData.resize(BatteryPackPtr->getCellInSeries() * BatteryPackPtr->getCellInParallel());
 
         for (int j = 0; j < 4; j++)
         {
             for (int k = 0; k < 3; k++)
             {
+                CurrentResultData[j * k].push_back(cellCurrent);
+
                 BatteryPackPtr->calculateCellVoltage(cellCurrent);
-                ResultData[(j + 1) * (k + 1)].push_back(BatteryPackPtr->getCellVolatge(j, k));
+                VoltageResultData[j * k].push_back(BatteryPackPtr->getCellVolatge(j, k));
 
                 BatteryPackPtr->claculateAverageTemperature(CurrentPIDController->getCommand());
-                ResultData[(j + 1) * (k + 1)].push_back(BatteryPackPtr->getCellTemperature(j, k));
+                TemperatureResultData[j * k].push_back(BatteryPackPtr->getCellTemperature(j, k));
 
                 EKFPtr->runExtendedKalmanFilter(cellCurrent,
                                                 BatteryPackPtr->getCellVolatge(j, k),
@@ -75,11 +84,16 @@ void Simulation::RunSimulation()
                                                 globalData.GlobalTimeStep,
                                                 BatteryPackPtr->getBatteryCellElectricalModel(j, k));
                 double cellSOC = EKFPtr->getSOC();
-                ResultData[(j + 1) * (k + 1)].push_back(cellSOC);
+                SOCResultData[j * k].push_back(cellSOC);
             }
         }
     }
     BMSECUPtr->currentControl(BMSEvent::STOP);
 
     emit logMessage("Simulation Completed");
+}
+
+bool &Simulation::getIsSimulationReady()
+{
+    return isSimulationReady;
 }

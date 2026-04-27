@@ -23,4 +23,5 @@ target_link_libraries(GUI
     Qt6::Widgets
     Utilities
     ObjectModel
+    Simulation
     )

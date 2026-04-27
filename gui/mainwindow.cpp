@@ -10,6 +10,7 @@
 #include <QDateTime>
 #include <QSplitter>
 #include <QMessageBox>
+#include "../include/RunComputation/Simulation.h"
 
 #include <QFile>
 
@@ -31,9 +32,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     QToolButton *LoadCycleIcon = iconCreator.CreateIcon(":/icons/LoadCycleData.png", 100, "Open Load Cycle Settings");
     QToolButton *PlotDataIcon = iconCreator.CreateIcon(":/icons/PlotData.png", 100, "Plot Data");
+    QToolButton *RunSimulationIcon = iconCreator.CreateIcon(":/icons/RunSimulation.png", 75, "Run Simulation");
 
     topBarHorizontalLayout->addWidget(LoadCycleIcon);
     topBarHorizontalLayout->addWidget(PlotDataIcon);
+    topBarHorizontalLayout->addWidget(RunSimulationIcon);
     topBarHorizontalLayout->addStretch();
 
     mainLayout->addLayout(topBarHorizontalLayout);
@@ -56,18 +59,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     batteryCADModel.generateBatteryCADModel("battery_pack.step");
     cadWidget->loadStep("battery_pack.step");
     leftLayout->addWidget(cadWidget, 1);
-    // QLabel *plotPlaceholder = new QLabel(
-    //     "Plot Area\n\n"
-    //     "• Load a CSV file\n"
-    //     "• Select variables on the right\n"
-    //     "• Click 'Plot Selected'",
-    //     this);
-    // plotPlaceholder->setAlignment(Qt::AlignCenter);
-    // plotPlaceholder->setStyleSheet(
-    //     "background-color: #f8f9fa; "
-    //     "border: 2px dashed #aaa; "
-    //     "font-size: 15px; color: #555; padding: 40px;");
-    // leftLayout->addWidget(plotPlaceholder, 1);
 
     // Right Panel
     QWidget *rightPanel = new QWidget(this);
@@ -103,6 +94,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     connect(LoadCycleIcon, &QPushButton::clicked, this, &MainWindow::openLoadCycleWindow);
     connect(PlotDataIcon, &QPushButton::clicked, this, &MainWindow::onPlotSelected);
+    connect(RunSimulationIcon, &QPushButton::clicked, this, &MainWindow::onRunSimulation);
 
     log("Application Ready");
 }
@@ -163,4 +155,17 @@ void MainWindow::onPlotSelected()
     PlottingToolObject.plot();
 
     log("Plot Generated");
+}
+
+void MainWindow::onRunSimulation()
+{
+    Simulation *simulationObject = new Simulation(MainWindowData);
+    connect(simulationObject, &Simulation::logMessage, this, &MainWindow::log);
+    if (MainWindowData == nullptr || !simulationObject->getIsSimulationReady())
+    {
+        log("Data Must Be Parsed Before Simulation Starts");
+        delete simulationObject;
+        return;
+    }
+    simulationObject->RunSimulation();
 }

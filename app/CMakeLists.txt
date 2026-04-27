@@ -21,4 +21,5 @@ target_link_libraries(bms_app
     Qt6::Core 
     Qt6::Widgets
     ObjectModel
+    Simulation
 )
