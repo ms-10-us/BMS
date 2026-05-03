@@ -69,23 +69,19 @@ void ExtendedKalmanFilter::runExtendedKalmanFilter(
     }
 
     MatrixMultiplication matrixMultiplication = MatrixMultiplication();
-    matrixMultiplication.multiply(jacobianAPtr, Covariance);
+    matrixMultiplication.multiply(jacobianAPtr, 2, 2, Covariance, 2, 2);
     double **tempResultMatrix = matrixMultiplication.getResultMatrix();
-    matrixMultiplication.resetObject();
 
     MatrixTranspose matrixTranspose = MatrixTranspose();
-    matrixTranspose.Transpose(jacobianAPtr);
+    matrixTranspose.Transpose(jacobianAPtr, 2, 2);
     double **transposedJacobianA = matrixTranspose.getTranspose();
-    matrixTranspose.resetObject();
 
-    matrixMultiplication.multiply(tempResultMatrix, transposedJacobianA);
+    matrixMultiplication.multiply(tempResultMatrix, 2, 2, transposedJacobianA, 2, 2);
     double **tempResultMatrixTwo = matrixMultiplication.getResultMatrix();
-    matrixMultiplication.resetObject();
 
     MatrixAddition matrixAddition = MatrixAddition();
-    matrixAddition.addMatrix(tempResultMatrixTwo, Noise);
+    matrixAddition.addMatrix(tempResultMatrixTwo, 2, 2, Noise, 2, 2);
     Covariance = matrixAddition.getResultMatrix();
-    matrixAddition.resetObject();
 
     batteryCellElectricalModel->CalculateOCV(StatesVector[0]);
     batteryCellElectricalModel->Calculate_dOCV_dSOC(StatesVector[0]);
@@ -121,9 +117,9 @@ void ExtendedKalmanFilter::runExtendedKalmanFilter(
         Covariance[i][i] = Covariance[i][i] * (1 - kalmanGain[i] * jacobianHPtr[i]);
     }
 
-    matrixMultiplication.~MatrixMultiplication();
-    matrixTranspose.~MatrixTranspose();
-    matrixAddition.~MatrixAddition();
+    matrixTranspose.resetObject();
+    matrixMultiplication.resetObject();
+    matrixAddition.resetObject();
 }
 
 double ExtendedKalmanFilter::getSOC() const

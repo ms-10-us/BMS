@@ -13,7 +13,7 @@ private:
 public:
     MatrixAddition();
 
-    void addMatrix(double **matrixA, double **matrixB);
+    void addMatrix(double **matrixA, int rowMatrixA, int colMatrixA, double **matrixB, int rowMatrixB, int colMatrixB);
 
     void displayResultMatrix();
 

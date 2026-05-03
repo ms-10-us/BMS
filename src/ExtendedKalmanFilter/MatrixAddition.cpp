@@ -4,14 +4,8 @@
 
 MatrixAddition::MatrixAddition() = default;
 
-void MatrixAddition::addMatrix(double **matrixA, double **matrixB)
+void MatrixAddition::addMatrix(double **matrixA, int rowMatrixA, int colMatrixA, double **matrixB, int rowMatrixB, int colMatrixB)
 {
-    int rowMatrixA = sizeof(matrixA) / sizeof(matrixA[0]);
-    int colMatrixA = sizeof(matrixA[0]) / sizeof(matrixA[0][0]);
-
-    int rowMatrixB = sizeof(matrixB) / sizeof(matrixB[0]);
-    int colMatrixB = sizeof(matrixB[0]) / sizeof(matrixB[0][0]);
-
     if (rowMatrixA != rowMatrixB || colMatrixA != colMatrixB)
     {
         std::cerr << "Matrix Addition is not possible!";
@@ -21,8 +15,11 @@ void MatrixAddition::addMatrix(double **matrixA, double **matrixB)
         ResultMatrixRow = rowMatrixA;
         ResultMatrixCol = colMatrixA;
 
+        ResultMatrix = new double *[ResultMatrixRow];
+
         for (int i = 0; i < ResultMatrixRow; i++)
         {
+            ResultMatrix[i] = new double[ResultMatrixCol];
             for (int j = 0; j < ResultMatrixCol; j++)
             {
                 ResultMatrix[i][j] = matrixA[i][j] + matrixB[i][j];
@@ -50,18 +47,7 @@ double **MatrixAddition::getResultMatrix()
 
 void MatrixAddition::resetObject()
 {
-    if (ResultMatrix != nullptr)
-    {
-        for (int i = 0; i < ResultMatrixRow; i++)
-        {
-            if (ResultMatrix[i] != nullptr)
-            {
-                ResultMatrix[i] = nullptr;
-            }
-        }
-        ResultMatrix = nullptr;
-    }
-
+    ResultMatrix = nullptr;
     ResultMatrixRow = 0;
     ResultMatrixCol = 0;
 }

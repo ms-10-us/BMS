@@ -4,22 +4,24 @@
 class BatteryCellThermalModel
 {
 private:
-    double &CellMass;
-    double &CellCp;
-    double &CellResistance;
-    double &CellTemperature;
-    double &DeltaCellTemperature;
+    double CellMass;
+    double CellCp;
+    double CellResistance;
+    double CellTemperature;
+    double DeltaCellTemperature;
 
 public:
-    BatteryCellThermalModel(double &cellMass,
-                            double &cellCp,
-                            double &cellResistance,
-                            double &cellInitialTemperature,
-                            double &deltaCellTemperature);
+    BatteryCellThermalModel();
 
-    void CalculateCellTemperature(double &current, double &timeStep);
+    BatteryCellThermalModel(double cellMass,
+                            double cellCp,
+                            double cellResistance,
+                            double cellInitialTemperature,
+                            double deltaCellTemperature);
 
-    double &getTemperature() const;
+    void CalculateCellTemperature(double current, double timeStep);
+
+    double getTemperature() const;
 };
 
 #endif

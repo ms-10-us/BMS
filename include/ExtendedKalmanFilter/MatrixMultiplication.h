@@ -13,7 +13,7 @@ private:
 public:
     MatrixMultiplication();
 
-    void multiply(double **matrixA, double **matrixB);
+    void multiply(double **matrixA, int rowMatrixA, int colMatrixA, double **matrixB, int rowMatrixB, int colMatrixB);
 
     void displayResultMatrix();
 

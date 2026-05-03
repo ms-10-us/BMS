@@ -2,15 +2,17 @@
 #include <cmath>
 #include <algorithm>
 
-BatteryCellElectricalModel::BatteryCellElectricalModel(double &capacityAh,
-                                                       double &r0,
-                                                       double &r1,
-                                                       double &c1,
-                                                       double &initialSOC,
-                                                       double &v1,
-                                                       double &voltage,
-                                                       double &current,
-                                                       double &dOCV_dSOC)
+BatteryCellElectricalModel::BatteryCellElectricalModel() = default;
+
+BatteryCellElectricalModel::BatteryCellElectricalModel(double capacityAh,
+                                                       double r0,
+                                                       double r1,
+                                                       double c1,
+                                                       double initialSOC,
+                                                       double v1,
+                                                       double voltage,
+                                                       double current,
+                                                       double dOCV_dSOC)
     : CellCapacity(capacityAh),
       CellR0(r0),
       CellR1(r1),
@@ -50,17 +52,17 @@ void BatteryCellElectricalModel::RunRCModel(double &current, double &dt)
     CellVoltage = ocv - current * CellR0 - CellV1;
 }
 
-double &BatteryCellElectricalModel::getVoltage() const
+double BatteryCellElectricalModel::getVoltage() const
 {
     return CellVoltage;
 }
 
-double &BatteryCellElectricalModel::getSOC() const
+double BatteryCellElectricalModel::getSOC() const
 {
     return CellSOC;
 }
 
-double &BatteryCellElectricalModel::get_dOCV_dSOC() const
+double BatteryCellElectricalModel::get_dOCV_dSOC() const
 {
     return Cell_dOCV_dSOC;
 }

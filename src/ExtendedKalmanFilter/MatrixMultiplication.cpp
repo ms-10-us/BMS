@@ -4,14 +4,8 @@
 
 MatrixMultiplication::MatrixMultiplication() = default;
 
-void MatrixMultiplication::multiply(double **matrixA, double **matrixB)
+void MatrixMultiplication::multiply(double **matrixA, int rowMatrixA, int colMatrixA, double **matrixB, int rowMatrixB, int colMatrixB)
 {
-    int rowMatrixA = sizeof(matrixA) / sizeof(matrixA[0]);
-    int colMatrixA = sizeof(matrixA[0]) / sizeof(matrixA[0][0]);
-
-    int rowMatrixB = sizeof(matrixB) / sizeof(matrixB[0]);
-    int colMatrixB = sizeof(matrixB[0]) / sizeof(matrixB[0][0]);
-
     if (colMatrixA != rowMatrixB)
     {
         std::cerr << "Matrix Multiplication is not possible!";
@@ -21,8 +15,11 @@ void MatrixMultiplication::multiply(double **matrixA, double **matrixB)
         ResultMatrixRow = rowMatrixA;
         ResultMatrixCol = colMatrixB;
 
+        ResultMatrix = new double *[ResultMatrixRow];
+
         for (int i = 0; i < ResultMatrixRow; i++)
         {
+            ResultMatrix[i] = new double[ResultMatrixCol];
             for (int j = 0; j < ResultMatrixCol; j++)
             {
                 ResultMatrix[i][j] = 0.0;
@@ -54,18 +51,7 @@ double **MatrixMultiplication::getResultMatrix()
 
 void MatrixMultiplication::resetObject()
 {
-    if (ResultMatrix != nullptr)
-    {
-        for (int i = 0; i < ResultMatrixRow; i++)
-        {
-            if (ResultMatrix[i] != nullptr)
-            {
-                ResultMatrix[i] = nullptr;
-            }
-        }
-        ResultMatrix = nullptr;
-    }
-
+    ResultMatrix = nullptr;
     ResultMatrixRow = 0;
     ResultMatrixCol = 0;
 }

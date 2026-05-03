@@ -1,27 +1,27 @@
-#ifndef MATRIXPIECEWISEMULTIPLICATION_H
-#define MATRIXPIECEWISEMULTIPLICATION_H
+// #ifndef MATRIXPIECEWISEMULTIPLICATION_H
+// #define MATRIXPIECEWISEMULTIPLICATION_H
 
-class MatrixPieceWiseMutiplication
-{
-private:
-    int ResultMatrixRow;
+// class MatrixPieceWiseMutiplication
+// {
+// private:
+//     int ResultMatrixRow;
 
-    int ResultMatrixCol;
+//     int ResultMatrixCol;
 
-    double **ResultMatrix;
+//     double **ResultMatrix;
 
-public:
-    MatrixPieceWiseMutiplication();
+// public:
+//     MatrixPieceWiseMutiplication();
 
-    void PieceWiseMultilply(double **matrixA, double **matrixB);
+//     void PieceWiseMultilply(double **matrixA, double **matrixB);
 
-    void diplayResultMatrix();
+//     void diplayResultMatrix();
 
-    double **getResultMatrix();
+//     double **getResultMatrix();
 
-    void resetObject();
+//     void resetObject();
 
-    ~MatrixPieceWiseMutiplication();
-};
+//     ~MatrixPieceWiseMutiplication();
+// };
 
-#endif
+// #endif

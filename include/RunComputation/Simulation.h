@@ -29,9 +29,9 @@ private:
 
     BatteryStateMachine *BatteryStateMachinePtr = nullptr;
 
-    ExtendedKalmanFilter *EKFPtr = nullptr;
-
     BMSECU *BMSECUPtr = nullptr;
+
+    std::vector<std::string> ResultVectorNames;
 
     std::vector<std::vector<double>> CurrentResultData;
 
@@ -43,17 +43,28 @@ private:
 
     bool isSimulationReady = false;
 
+    std::vector<std::unique_ptr<ExtendedKalmanFilter>> EKFPerCell;
+
+    std::vector<std::unique_ptr<BatteryCellElectricalModel>> CellModelPerCell;
+
 public:
     Simulation(DataParse *parsedData, QObject *parent = nullptr);
 
-    void RunSimulation();
+    void RunSimulation(std::function<void(int)> progressCallBack);
 
     bool &getIsSimulationReady();
 
-    // ~Simulation();
+    const std::vector<std::string> &getResultVectorNames();
 
-signals:
-    void logMessage(const QString &message);
+    const std::vector<std::vector<double>> &getCurrentResultData();
+
+    const std::vector<std::vector<double>> &getVoltageResultData();
+
+    const std::vector<std::vector<double>> &getTemperatureResultData();
+
+    const std::vector<std::vector<double>> &getSOCResultData();
+
+    // ~Simulation();
 };
 
 #endif

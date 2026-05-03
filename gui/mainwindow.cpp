@@ -160,7 +160,7 @@ void MainWindow::onPlotSelected()
 void MainWindow::onRunSimulation()
 {
     Simulation *simulationObject = new Simulation(MainWindowData);
-    connect(simulationObject, &Simulation::logMessage, this, &MainWindow::log);
+    log("Simulation Started");
     if (MainWindowData == nullptr || !simulationObject->getIsSimulationReady())
     {
         log("Data Must Be Parsed Before Simulation Starts");
@@ -168,4 +168,12 @@ void MainWindow::onRunSimulation()
         return;
     }
     simulationObject->RunSimulation();
+
+    log("Simulation Completed");
+
+    const std::vector<std::string> &resultVectorNames = simulationObject->getResultVectorNames();
+    for (const auto &name : resultVectorNames)
+    {
+        VariableListWidget->addItem(QString::fromStdString(name));
+    }
 }

@@ -1,11 +1,13 @@
 #include "../../include/BMS/BatteryCellThermalModel.h"
 #include <cmath>
 
-BatteryCellThermalModel::BatteryCellThermalModel(double &cellMass,
-                                                 double &cellCp,
-                                                 double &cellResistance,
-                                                 double &cellInitialTemperature,
-                                                 double &deltaCellTemperature)
+BatteryCellThermalModel::BatteryCellThermalModel() = default;
+
+BatteryCellThermalModel::BatteryCellThermalModel(double cellMass,
+                                                 double cellCp,
+                                                 double cellResistance,
+                                                 double cellInitialTemperature,
+                                                 double deltaCellTemperature)
     : CellMass(cellMass),
       CellCp(cellCp),
       CellResistance(cellResistance),
@@ -14,14 +16,14 @@ BatteryCellThermalModel::BatteryCellThermalModel(double &cellMass,
 {
 }
 
-void BatteryCellThermalModel::CalculateCellTemperature(double &current, double &timeStep)
+void BatteryCellThermalModel::CalculateCellTemperature(double current, double timeStep)
 {
     double dTdt = (1 / (CellMass * CellCp)) * pow(current, 2) * CellResistance;
     DeltaCellTemperature += dTdt * timeStep;
     CellTemperature += DeltaCellTemperature;
 }
 
-double &BatteryCellThermalModel::getTemperature() const
+double BatteryCellThermalModel::getTemperature() const
 {
     return CellTemperature;
 }

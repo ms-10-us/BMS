@@ -1,27 +1,27 @@
-#ifndef MATRIXVECTORMULTIPLICATION_H
-#define MATRIXVECTORMULTIPLICATION_H
+// #ifndef MATRIXVECTORMULTIPLICATION_H
+// #define MATRIXVECTORMULTIPLICATION_H
 
-class MatrixVectorMultiplication
-{
-private:
-    int ResultMatrixRow;
+// class MatrixVectorMultiplication
+// {
+// private:
+//     int ResultMatrixRow;
 
-    int ResultMatrixCol;
+//     int ResultMatrixCol;
 
-    double **ResultMatrix;
+//     double **ResultMatrix;
 
-public:
-    MatrixVectorMultiplication();
+// public:
+//     MatrixVectorMultiplication();
 
-    void multiplyByVector(double **matrixA, double *vector);
+//     void multiplyByVector(double **matrixA, double *vector);
 
-    void displayResultMatrix();
+//     void displayResultMatrix();
 
-    double **getResultMatrix();
+//     double **getResultMatrix();
 
-    void resetObject();
+//     void resetObject();
 
-    ~MatrixVectorMultiplication();
-};
+//     ~MatrixVectorMultiplication();
+// };
 
-#endif
+// #endif

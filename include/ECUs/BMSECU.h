@@ -6,7 +6,6 @@
 #include "../Utilities/CANBus.h"
 #include "../BMS/BatteryStateMachine.h"
 #include "../Utilities/PIDController.h"
-#include "../ExtendedKalmanFilter/ExtendedKalmanFilter.h"
 
 class BMSECU
 {
@@ -16,7 +15,6 @@ private:
     CANBus *CanReference;
     BatteryStateMachine *StateMachineReference;
     PIDController *CurrentPIDReference;
-    ExtendedKalmanFilter *SOCEKFReference;
 
     void monitorTask();
     void safetyTask();
@@ -27,8 +25,7 @@ public:
            DTCManager *dtcManagerReference,
            CANBus *canBusReference,
            BatteryStateMachine *batteryStateMachineReference,
-           PIDController *currentPIDReference,
-           ExtendedKalmanFilter *socEKFReference);
+           PIDController *currentPIDReference);
 
     ~BMSECU();
 

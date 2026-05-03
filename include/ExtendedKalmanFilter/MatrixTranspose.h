@@ -11,7 +11,7 @@ private:
 public:
     MatrixTranspose();
 
-    void Transpose(double **matrix);
+    void Transpose(double **matrix, int matrixRow, int matrixCol);
 
     void displayTranspose();
 

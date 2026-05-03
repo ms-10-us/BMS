@@ -1,29 +1,29 @@
-#ifndef GAINMULTIPLICATION_H
-#define GAINMULTIPLICATION_H
+// #ifndef GAINMULTIPLICATION_H
+// #define GAINMULTIPLICATION_H
 
-class GainMultiplication
-{
-private:
-    int ResultMatrixRow;
+// class GainMultiplication
+// {
+// private:
+//     int ResultMatrixRow;
 
-    int ResultMatrixCol;
+//     int ResultMatrixCol;
 
-    double **ResultMatrix;
+//     double **ResultMatrix;
 
-    double Gain;
+//     double Gain;
 
-public:
-    GainMultiplication(double gain);
+// public:
+//     GainMultiplication(double gain);
 
-    void muliplyByGain(double **matrix);
+//     void muliplyByGain(double **matrix);
 
-    void displayResultMatrix();
+//     void displayResultMatrix();
 
-    double **getResultMatrix();
+//     double **getResultMatrix();
 
-    void resetObject();
+//     void resetObject();
 
-    ~GainMultiplication();
-};
+//     ~GainMultiplication();
+// };
 
-#endif
+// #endif

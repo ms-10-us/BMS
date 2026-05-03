@@ -4,16 +4,16 @@
 
 MatrixTranspose::MatrixTranspose() = default;
 
-void MatrixTranspose::Transpose(double **matrix)
+void MatrixTranspose::Transpose(double **matrix, int matrixRow, int matrixCol)
 {
-    int matrixRow = sizeof(matrix) / sizeof(matrix[0]);
-    int matrixCol = sizeof(matrix[0]) / sizeof(matrix[0][0]);
-
     TransposedMatrixRow = matrixCol;
     TransposedMatrixCol = matrixRow;
 
+    TransposedMatrix = new double *[TransposedMatrixRow];
+
     for (int i = 0; i < TransposedMatrixRow; i++)
     {
+        TransposedMatrix[i] = new double[TransposedMatrixCol];
         for (int j = 0; j < TransposedMatrixCol; j++)
         {
             TransposedMatrix[i][j] = matrix[j][i];
@@ -40,18 +40,7 @@ double **MatrixTranspose::getTranspose()
 
 void MatrixTranspose::resetObject()
 {
-    if (TransposedMatrix != nullptr)
-    {
-        for (int i = 0; i < TransposedMatrixRow; i++)
-        {
-            if (TransposedMatrix[i] != nullptr)
-            {
-                TransposedMatrix[i] = nullptr;
-            }
-        }
-        TransposedMatrix = nullptr;
-    }
-
+    TransposedMatrix = nullptr;
     TransposedMatrixRow = 0;
     TransposedMatrixCol = 0;
 }

@@ -7,14 +7,12 @@ BMSECU::BMSECU(BatteryPack *batteryPackReference,
                DTCManager *dtcManagerReference,
                CANBus *canBusReference,
                BatteryStateMachine *batteryStateMachineReference,
-               PIDController *currentPIDReference,
-               ExtendedKalmanFilter *socEKFReference)
+               PIDController *currentPIDReference)
     : BatteryPackReference(batteryPackReference),
       DTCManagerReference(dtcManagerReference),
       CanReference(canBusReference),
       StateMachineReference(batteryStateMachineReference),
-      CurrentPIDReference(currentPIDReference),
-      SOCEKFReference(SOCEKFReference)
+      CurrentPIDReference(currentPIDReference)
 {
     globalData.RunningBMS = false;
 }
