@@ -47,6 +47,10 @@ private:
 
     std::vector<std::unique_ptr<BatteryCellElectricalModel>> CellModelPerCell;
 
+    std::vector<std::vector<double>> CellVoltageData;
+
+    std::vector<double> CurrentSetPointData;
+
 public:
     Simulation(DataParse *parsedData, QObject *parent = nullptr);
 

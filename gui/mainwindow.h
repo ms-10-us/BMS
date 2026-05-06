@@ -35,6 +35,8 @@ public:
     void log(const QString &msg);
 
     void loadCycleData(DataParse *data);
+
+    void updateConsole(int step);
 };
 
 #endif

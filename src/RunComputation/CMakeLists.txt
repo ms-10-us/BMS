@@ -4,7 +4,9 @@ qt_standard_project_setup()
 
 add_library(Simulation
     Simulation.cpp
+    SimulationWorker.cpp
     ${PROJECT_SOURCE_DIR}/include/RunComputation/Simulation.h
+    ${PROJECT_SOURCE_DIR}/include/RunComputation/SimulationWorker.h
 )
 
 set_target_properties(Simulation PROPERTIES

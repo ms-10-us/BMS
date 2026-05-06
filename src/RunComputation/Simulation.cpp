@@ -44,16 +44,29 @@ Simulation::Simulation(DataParse *parsedData, QObject *parent)
 
     CellModelPerCell.resize(globalData.CellInParallel * globalData.CellInSeries);
     EKFPerCell.resize(globalData.CellInParallel * globalData.CellInSeries);
+    CellVoltageData.resize(globalData.CellInParallel * globalData.CellInSeries);
 
     for (int j = 0; j < globalData.CellInParallel; j++)
     {
-        for (int k = 0; k < globalData.CellInSeries; j++)
+        for (int k = 0; k < globalData.CellInSeries; k++)
         {
-            int dataIndex = j * globalData.CellInParallel + k;
-            CellModelPerCell[dataIndex] = std::make_unique<BatteryCellElectricalModel>(BatteryPackPtr->getBatteryCellElectricalModel(j, k));
+            int dataIndex = j * globalData.CellInSeries + k;
+            CellModelPerCell[dataIndex] = std::make_unique<BatteryCellElectricalModel>(globalData.GlobalCapacityAh,
+                                                                                       globalData.GlobalR0,
+                                                                                       globalData.GlobalR1,
+                                                                                       globalData.GlobalC1,
+                                                                                       globalData.GlobalInitialSOC,
+                                                                                       globalData.GlobalV1,
+                                                                                       globalData.GlobalVoltage,
+                                                                                       globalData.GlobalCurrent,
+                                                                                       globalData.dOCV_dSOC);
             EKFPerCell[dataIndex] = std::make_unique<ExtendedKalmanFilter>(globalData.GlobalInitialSOC);
+
+            CellVoltageData[dataIndex] = SimulationData->getColumn(std::format("cell{}_V", dataIndex + 1));
         }
     }
+
+    CurrentSetPointData = SimulationData->getColumn("pack_current_A");
 }
 
 void Simulation::RunSimulation(std::function<void(int)> progressCallBack)
@@ -67,18 +80,17 @@ void Simulation::RunSimulation(std::function<void(int)> progressCallBack)
     TemperatureResultData.resize(totalCells);
     SOCResultData.resize(totalCells);
 
-    std::vector<double> currentSetPointData = SimulationData->getColumn("pack_current_A");
-    std::vector<double> timeStampData = SimulationData->getColumn("timestamp_ms");
-    std::vector<double> cellVoltageData;
-
     int stepCount = SimulationData->getRowNumber();
 
     for (int i = 0; i < stepCount; i++)
     {
         std::vector<std::future<void>> futuresVector;
 
-        CurrentPIDController->RunPIDController(currentSetPointData[i], CurrentPIDController->getCommand(), globalData.GlobalTimeStep);
+        CurrentPIDController->RunPIDController(CurrentSetPointData[i], CurrentPIDController->getCommand(), globalData.GlobalTimeStep);
         double cellCurrent = abs(BatteryPackPtr->getCellCurrent(CurrentPIDController->getCommand()));
+
+        BatteryPackPtr->calculateCellVoltage(cellCurrent);
+        BatteryPackPtr->claculateAverageTemperature(cellCurrent);
 
         for (int j = 0; j < cellParallel; j++)
         {
@@ -88,19 +100,14 @@ void Simulation::RunSimulation(std::function<void(int)> progressCallBack)
                 futuresVector.push_back(std::async(std::launch::async, [&, j, k]()
                                                    {
                                                     
-                                                        int dataIndex = j * cellParallel + k;
-
-                                                        cellVoltageData = SimulationData->getColumn(std::format("Cell{}_V", dataIndex));
-
-                                                        BatteryPackPtr->calculateCellVoltage(cellCurrent);
-                                                        BatteryPackPtr->claculateAverageTemperature(cellCurrent);
+                                                        int dataIndex = j * cellSeries + k; 
 
                                                         double cellVoltage = BatteryPackPtr->getCellVolatge(j, k);
                                                         double cellTemp = BatteryPackPtr->getCellTemperature(j, k);
 
                                                         EKFPerCell[dataIndex]->runExtendedKalmanFilter(cellCurrent,
                                                                                         cellVoltage,
-                                                                                        cellVoltageData[i],
+                                                                                        CellVoltageData[dataIndex][i],
                                                                                         globalData.GlobalTimeStep,
                                                                                         CellModelPerCell[dataIndex].get());
                                                         double cellSOC = EKFPerCell[dataIndex]->getSOC();
@@ -108,7 +115,7 @@ void Simulation::RunSimulation(std::function<void(int)> progressCallBack)
                                                         CurrentResultData[dataIndex].push_back(cellCurrent);
                                                         VoltageResultData[dataIndex].push_back(cellVoltage);
                                                         TemperatureResultData[dataIndex].push_back(cellTemp);
-                                                        SOCResultData[j * k].push_back(cellSOC); }));
+                                                        SOCResultData[dataIndex].push_back(cellSOC); }));
             }
         }
 

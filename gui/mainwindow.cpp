@@ -11,6 +11,8 @@
 #include <QSplitter>
 #include <QMessageBox>
 #include "../include/RunComputation/Simulation.h"
+#include <QThread>
+#include "../include/RunComputation/SimulationWorker.h"
 
 #include <QFile>
 
@@ -160,20 +162,45 @@ void MainWindow::onPlotSelected()
 void MainWindow::onRunSimulation()
 {
     Simulation *simulationObject = new Simulation(MainWindowData);
-    log("Simulation Started");
+
     if (MainWindowData == nullptr || !simulationObject->getIsSimulationReady())
     {
         log("Data Must Be Parsed Before Simulation Starts");
         delete simulationObject;
         return;
     }
-    simulationObject->RunSimulation();
 
-    log("Simulation Completed");
+    QThread *simulationThreads = new QThread();
+    SimulationWorker *simulationWorker = new SimulationWorker();
+    simulationWorker->moveToThread(simulationThreads);
 
-    const std::vector<std::string> &resultVectorNames = simulationObject->getResultVectorNames();
-    for (const auto &name : resultVectorNames)
-    {
-        VariableListWidget->addItem(QString::fromStdString(name));
-    }
+    connect(simulationThreads, &QThread::started, simulationWorker, [simulationWorker, simulationObject]()
+            { 
+                simulationWorker->process(simulationObject); 
+            
+                
+            });
+
+    connect(simulationWorker, &SimulationWorker::progress, this, &MainWindow::updateConsole);
+
+    connect(simulationWorker, &SimulationWorker::finished, this, [this, simulationObject]()
+            {
+                const std::vector<std::string> &resultVectorNames = simulationObject->getResultVectorNames();
+                for (const auto &name : resultVectorNames)
+                {
+                    VariableListWidget->addItem(QString::fromStdString(name));
+                } });
+
+    connect(simulationWorker, &SimulationWorker::finished, simulationThreads, &QThread::quit);
+
+    connect(simulationWorker, &SimulationWorker::finished, simulationWorker, &SimulationWorker::deleteLater);
+
+    connect(simulationThreads, &QThread::finished, simulationThreads, &QObject::deleteLater);
+
+    simulationThreads->start();
+}
+
+void MainWindow::updateConsole(int step)
+{
+    log(QString("Simulation step %1").arg(step));
 }
